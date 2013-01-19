@@ -967,8 +967,10 @@ function loadCurrentPage () {
 
 			width = left.width () * (ehour - shour);
 
+			typeclass = 'allocated_type_' + ev.type;
+
 			for (i = 0; i < ev.rooms.length; i++) {
-				box = $('<div class="allocated">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
+				box = $('<div class="allocated ' + typeclass + '">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
 				$('#eventspark').append (box);
 
 				box.css ('left', leftpx);

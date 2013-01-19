@@ -639,7 +639,7 @@ function do_week ($week) {
 		$weekday->date = "$d/$m/$y";
 		$weekdays [] = $weekday;
 
-		$query = "SELECT eventdates.id AS id, events.title AS title, DATE(eventdates.startdate) AS day,
+		$query = "SELECT eventdates.id AS id, events.title AS title, events.type AS type, DATE(eventdates.startdate) AS day,
 					HOUR(eventdates.startdate) AS start, MINUTE(eventdates.startdate) AS startmin,
 					HOUR(eventdates.enddate) AS end, MINUTE(eventdates.enddate) AS endmin
 				FROM events, eventdates
@@ -652,6 +652,7 @@ function do_week ($week) {
 			$ev = new stdClass ();
 			$ev->id = $d ['id'];
 			$ev->name = $d ['title'];
+			$ev->type = $d ['type'];
 			$ev->day = date_dbtoform ($d ['day']);
 			$ev->shour = $d ['start'] . ':' . str_pad ($d ['startmin'], 2, '0');
 			$ev->ehour = $d ['end'] . ':' . str_pad ($d ['endmin'], 2, '0');

@@ -122,7 +122,7 @@ require_once ('utils.php');
 }
 
 .maintable td {
-	border: 1px solid #FFFFFF;
+	border: 1px solid #EEEEEE;
 	overflow: hidden;
 	height: <?php echo getconf ('fontsize') ?>px;
 	padding: 2px;
@@ -155,12 +155,23 @@ require_once ('utils.php');
 	border: 1px solid #DDDDDD;
 	cursor: pointer;
 	cursor: hand;
-	background-color: #DDDDDD;
 	font-size: <?php echo getconf ('fontsize') ?>px;
 	height: <?php echo getconf ('fontsize') + 4 ?>px;
 	overflow: hidden;
 	z-index: 50;
 	padding: 2px;
+}
+
+.allocated_type_0 {
+	background-color: #FDD;
+}
+
+.allocated_type_1 {
+	background-color: #DFD;
+}
+
+.allocated_type_2 {
+	background-color: #DDF;
 }
 
 .console {
