@@ -70,8 +70,15 @@ function parse_session_data () {
 }
 
 function check_session () {
-	global $db;
+	global $autokey;
 	global $current_permissions;
+
+	if (array_key_exists ('autokey', $_GET) == true && $_GET ['autokey'] == $autokey) {
+		$current_permissions = 0;
+		return true;
+	}
+
+	global $db;
 
 	$current_session_id = parse_session_data ();
 	if ($current_session_id == false)

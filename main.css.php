@@ -79,6 +79,10 @@ require_once ('utils.php');
 	background-color: #CCCCFF;
 }
 
+.mainhead .datecol div {
+	display: inline-block;
+}
+
 .mainhead tbody {
 	width: 100%;
 }
@@ -94,11 +98,6 @@ require_once ('utils.php');
 	padding: 2px;
 	border: 1px solid #FFFFFF;
 	width: 5.88%;
-}
-
-.mainhead .head_special_actions {
-	width: 2%;
-	display: inline-block;
 }
 
 .maintable {
@@ -123,7 +122,6 @@ require_once ('utils.php');
 
 .maintable td {
 	border: 1px solid #EEEEEE;
-	overflow: hidden;
 	height: <?php echo getconf ('fontsize') ?>px;
 	padding: 2px;
 	width: 5.88%;

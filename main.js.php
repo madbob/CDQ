@@ -9,6 +9,8 @@ global $maxhour;
 
 ?>
 
+var currentData = null;
+
 $(document).ready (function () {
 	$('.date').datepicker ({
 		dateFormat: 'dd/mm/yy'
@@ -53,6 +55,11 @@ $(document).ready (function () {
 		var index = menu.attr ("id").split ("tab_menu_") [1];
 		$(".curvedContainer .tabcontent").css ("display", "none");
 		$(".curvedContainer #tab_content_" + index).css ("display", "block");
+	});
+
+	$('.print_button').click (function () {
+		s = getCurrentDate ();
+		$('body').append ('<iframe src="printer.php?starting=' + s + '"></iframe>');
 	});
 
 	/***********************************************************************
@@ -927,59 +934,109 @@ function setupHover () {
 	});
 }
 
-function loadCurrentPage () {
+function loadCurrentData () {
+	var data = currentData;
+	$('.allocated').remove ();
+
+	for (i = 0; i < 7; i++) {
+		d = data.weekdays [i];
+		row = $('.maintable .daysep:eq(' + i + ')');
+		row.find ('span').text (d.name);
+		row.find ('input[name=date]').val (d.date);
+	}
+
+	setupHover ();
+
+	for (a = 0; a < data.events.length; a++) {
+		ev = data.events [a];
+
+		stokens = ev.shour.split (':');
+		shour = parseInt (stokens [0]);
+		if (stokens [1] != '00')
+			shour += 0.5;
+
+		etokens = ev.ehour.split (':');
+
+		ehour = parseInt (etokens [0]);
+		if (etokens [1] != '00')
+			ehour += 0.5;
+
+		/*
+			Qui (e sotto) sfrutto il fatto che wkhtmltopdf,
+			usato per produrre i PDF delle pagine, non
+			implementa la funzione window.matchMedia().
+			Percui posso calcolare le dimensioni o
+			dinamicamente prendendo i riferimenti sullo
+			schermo, o basandomi su dimensioni fisse e note
+			definite nel CSS per i fogli A4
+		*/
+		if (window.matchMedia) {
+			left = $('.mainhead td.head_' + stokens[0]);
+			leftpx = left.offset ().left;
+
+			if (stokens [1] != '00')
+				leftpx = leftpx + (left.width () / 2);
+
+			leftpx = leftpx + 'px';
+
+			width = left.width () * (ehour - shour);
+			width = width + 'px';
+		}
+		else {
+			/*
+				larghezza del foglio A4 standard   /
+				numero di colonne                  =
+				larghezza fissa di ogni colonna
+			*/
+			standard = 210 / (<?php echo ($maxhour - $minhour) + 2 ?>);
+			width = standard;
+			width = width + 'mm';
+			leftpx = standard * ((shour - <?php echo $minhour ?>) + 1);
+			leftpx = leftpx + 'mm';
+		}
+
+		typeclass = 'allocated_type_' + ev.type;
+
+		for (i = 0; i < ev.rooms.length; i++) {
+			row = $('.daysep:has(input[value="' + ev.day + '"])').nextAll ('tr:has(td.datecol input[name=roomid][value=' + ev.rooms [i] + ']):first');
+
+			if (window.matchMedia) {
+				t = row.offset ().top;
+			}
+			else {
+				/*
+					20 e' il margine alto della tabella principale
+					3 dovrebbe rappresentare la somma dei margini per ogni cella
+					1.2 e' totalmente arbitrario ed empirico
+				*/
+				t = ((row.index ()) * <?php echo getconf ('fontsize') * 1.2 ?>) + ((row.index ()) * 3) + 20;
+			}
+
+			box = $('<div class="allocated ' + typeclass + '">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
+			$('#eventspark').append (box);
+
+			box.css ('left', leftpx);
+			box.css ('width', width);
+			box.css ('top', t + 'px');
+		}
+	}
+}
+
+function getCurrentDate () {
 	y = $('.navyear .active').text ();
 	m = $('.navmonth .active a').attr ('class');
 	d = $('.navweek .active').text ();
 	s = y + "-" + m + "-" + d;
+	return s;
+}
 
+function loadCurrentPage () {
+	s = getCurrentDate ();
 	loading (true);
 
 	$.getJSON ('async_ui.php?type=page&start=' + s, function (data) {
-		$('.allocated').remove ();
-
-		for (i = 0; i < 7; i++) {
-			d = data.weekdays [i];
-			row = $('.maintable .daysep:eq(' + i + ')');
-			row.find ('span').text (d.name);
-			row.find ('input[name=date]').val (d.date);
-		}
-
-		setupHover ();
-
-		for (a = 0; a < data.events.length; a++) {
-			ev = data.events [a];
-
-			stokens = ev.shour.split (':');
-			etokens = ev.ehour.split (':');
-
-			left = $('.mainhead td.head_' + stokens[0]);
-			leftpx = left.offset ().left;
-
-			shour = parseInt (stokens [0]);
-			if (stokens [1] != '00') {
-				shour += 0.5;
-				leftpx = leftpx + (left.width () / 2);
-			}
-			ehour = parseInt (etokens [0]);
-			if (etokens [1] != '00')
-				ehour += 0.5;
-
-			width = left.width () * (ehour - shour);
-
-			typeclass = 'allocated_type_' + ev.type;
-
-			for (i = 0; i < ev.rooms.length; i++) {
-				box = $('<div class="allocated ' + typeclass + '">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
-				$('#eventspark').append (box);
-
-				box.css ('left', leftpx);
-				box.css ('width', width);
-				row = $('.daysep:has(input[value="' + ev.day + '"])').nextAll ('tr:has(td.datecol input[name=roomid][value=' + ev.rooms [i] + ']):first');
-				box.css ('top', row.offset ().top);
-			}
-		}
-
+		currentData = data;
+		loadCurrentData ();
 		loading (false);
 	});
 

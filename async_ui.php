@@ -12,7 +12,7 @@ switch ($_GET ['type']) {
 		break;
 
 	case 'page':
-		do_week ($_GET ['start']);
+		echo json_encode (do_week ($_GET ['start']));
 		break;
 
 	case 'check_days':

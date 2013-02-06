@@ -26,10 +26,11 @@ $rooms = retrieve_rooms ();
 	<script type="text/javascript" src="main.js.php"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 
-	<link rel="stylesheet" href="css/bootstrap.css" />
-	<link rel="stylesheet" href="css/jquery-ui.css" />
-	<link rel="stylesheet" href="css/jquery.ui.timepicker.css" />
-	<link rel="stylesheet" href="main.css.php" />
+	<link rel="stylesheet" media="screen" href="css/bootstrap.css" />
+	<link rel="stylesheet" media="screen" href="css/jquery-ui.css" />
+	<link rel="stylesheet" media="screen" href="css/jquery.ui.timepicker.css" />
+	<link rel="stylesheet" media="screen" href="main.css.php" />
+	<link rel="stylesheet" media="print" href="print.css.php" />
 </head>
 
 <body>
@@ -42,9 +43,9 @@ $rooms = retrieve_rooms ();
 			<tr>
 				<td class="datecol iblock">
 					<?php if ($current_permissions == 1): ?>
-					<div class="conf_button"><img src="img/conf.png" alt="Configurazioni" /></div>
+					<div class="conf_button"><img src="img/conf.png" alt="Configurazioni" /></div> | 
 					<?php endif; ?>
-					 | <div class="logout_button"><img src="img/logout.png" alt="Logout" /></div>
+					<div class="print_button"><img src="img/printer.png" alt="Stampa" /></div> | <div class="logout_button"><img src="img/logout.png" alt="Logout" /></div>
 				</td>
 
 				<?php for ($i = $minhour; $i <= $maxhour; $i++): ?>
@@ -113,11 +114,17 @@ $rooms = retrieve_rooms ();
 
 <?php
 
-$w = date ('N');
-if ($w != 1)
-	$current_week = date ('Y-m-d', strtotime (date ('Y-m-d') . " - " . ($w - 1) . " days"));
-else
-	$current_week = date ('Y-m-d');
+if (array_key_exists ('starting', $_GET) == false) {
+	$w = date ('N');
+
+	if ($w != 1)
+		$current_week = date ('Y-m-d', strtotime (date ('Y-m-d') . " - " . ($w - 1) . " days"));
+	else
+		$current_week = date ('Y-m-d');
+}
+else {
+	$current_week = $_GET ['starting'];
+}
 
 list ($y, $m, $d) = explode ('-', $current_week);
 

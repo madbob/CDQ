@@ -667,7 +667,7 @@ function do_week ($week) {
 	$ret = new stdClass ();
 	$ret->weekdays = $weekdays;
 	$ret->events = $events;
-	echo json_encode ($ret);
+	return $ret;
 }
 
 function room_properties_form ($id, $name, $price, $visible, $new = true) {

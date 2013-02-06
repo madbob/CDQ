@@ -5,6 +5,12 @@ $user_db = 'cdq';
 $pass_db = 'cdq';
 $work_db = 'cdq';
 
+/*
+	Stringa randomica usata per validare l'accesso automatico
+*/
+global $autokey;
+$autokey = 'bvuir7cns';
+
 global $db;
 $db = new mysqli ($host_db, $user_db, $pass_db, $work_db) or die ("Errore nella connessione con il database");
 
