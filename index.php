@@ -37,6 +37,8 @@ $rooms = retrieve_rooms ();
 
 <!------------------------------------------------------------------- HEADER -->
 
+<input type="hidden" name="current_permissions" value="<?php echo $current_permissions ?>" />
+
 <div class="fixed_header">
 	<table class="mainhead page_table">
 		<tbody>

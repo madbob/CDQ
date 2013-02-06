@@ -67,11 +67,13 @@ $(document).ready (function () {
 	*/
 
 	$('.maintable').delegate ('td', 'click', function () {
-		show_event_edit ($(this));
+		if ($('input[name=current_permissions]').val () == 1)
+			show_event_edit ($(this));
 	});
 
 	$('.allocated').live ('click', function () {
-		show_existing_event_edit ($(this));
+		if ($('input[name=current_permissions]').val () == 1)
+			show_existing_event_edit ($(this));
 	});
 
 	loadCurrentPage ();
@@ -544,21 +546,30 @@ $(document).ready (function () {
 
 	$('.users_parameters .save_button').click (function () {
 		var users = new Array ();
+		var valid = true;
 
 		$('.usersgrid tbody tr').each (function () {
 			user = {
 				id: $(this).find ('input[name=userid]').val (),
 				username: $(this).find ('input[name=username]').val (),
 				password: $(this).find ('input[name=password]').val (),
-				permission: $(this).find ('input[name=admin]').is ('checked') ? '1' : '0'
+				permission: $(this).find ('input[name=admin]').attr ('checked') == 'checked' ? '1' : '0'
 			};
 
-			users.push (user);
+			if (user.username != '' && user.id == 'new' && user.password == '') {
+				alert ("Non hai specificato una password per il nuovo utente " + user.username);
+				valid = false;
+			}
+
+			if (user.username != '')
+				users.push (user);
 		});
 
-		$.post ('save_users.php', JSON.stringify (users), function () {
-			closeDialog ($(".configuration"));
-		});
+		if (valid == true) {
+			$.post ('save_users.php', {users: users}, function () {
+				closeDialog ($(".configuration"));
+			});
+		}
 
 		return false;
 	});
