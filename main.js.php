@@ -54,7 +54,7 @@ $(document).ready (function () {
 
 		var index = menu.attr ("id").split ("tab_menu_") [1];
 		$(".curvedContainer .tabcontent").css ("display", "none");
-		$(".curvedContainer #tab_content_" + index).css ("display", "block");
+		$(".curvedContainer #tab_content_" + index).css ("display", "inline-block");
 	});
 
 	$('.print_button').click (function () {

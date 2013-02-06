@@ -465,7 +465,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			<div style="display: none;" class="tabcontent" id="tab_content_2">
 				<form action="save_rooms.php" method="POST" class="configuration_rooms form-horizontal">
 					<div class="row">
-						<div class="rooms_names_wrapper span2">
+						<div class="rooms_names_wrapper span3">
 							<ul class="rooms_names">
 								<?php foreach ($rooms as $r): ?>
 								<li id="sorting_<?php echo $r ['id'] ?>"><img src="img/sorter.png" class="handle" /> <span><?php echo $r ['name'] ?></span></li>
@@ -475,7 +475,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 							<p class="add_room"><img src="img/add.png" /> Aggiungi Nuovo</p>
 						</div>
 
-						<ul class="rooms_descriptions span6">
+						<ul class="rooms_descriptions span5">
 							<?php
 							foreach ($rooms as $r)
 								room_properties_form ($r ['id'], $r ['name'], $r ['defaultprice'], $r ['visible']);
@@ -491,22 +491,22 @@ list ($y, $m, $d) = explode ('-', $current_week);
 				<form action="save_materials.php" method="POST" class="configuration_materials form-horizontal">
 					<div class="row">
 						<div class="mat_names_wrapper span7 offset1">
-							<?php
+							<fieldset>
+								<?php
 
-							$query = "SELECT * FROM materials ORDER BY name";
-							$result = $db->query ($query);
+								$query = "SELECT * FROM materials ORDER BY name";
+								$result = $db->query ($query);
 
-							?>
+								?>
 
-							<h3>Materiali</h3>
+								<ul class="materials_names">
+									<?php while ($r = $result->fetch_array ()): ?>
+									<li class="ec_<?php echo $r ['id'] ?>"><input value="<?php echo $r ['name'] ?>" /> <img class="remove_button" src="img/remove.png" /></li>
+									<?php endwhile; ?>
+								</ul>
 
-							<ul class="materials_names">
-								<?php while ($r = $result->fetch_array ()): ?>
-								<li class="ec_<?php echo $r ['id'] ?>"><input value="<?php echo $r ['name'] ?>" /> <img class="remove_button" src="img/remove.png" /></li>
-								<?php endwhile; ?>
-							</ul>
-
-							<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+							</fieldset>
 						</div>
 					</div>
 
@@ -518,45 +518,51 @@ list ($y, $m, $d) = explode ('-', $current_week);
 				<form action="save_categories.php" method="POST" class="configuration_categories form-horizontal">
 					<div class="row">
 						<div class="cat_names_wrapper span3 offset1">
-							<?php
+							<fieldset>
+								<?php
 
-							$query = "SELECT * FROM eventcategories ORDER BY name";
-							$result = $db->query ($query);
+								$query = "SELECT * FROM eventcategories ORDER BY name";
+								$result = $db->query ($query);
 
-							?>
+								?>
 
-							<h3>Categorie Eventi</h3>
+								<legend>Eventi</legend>
+								<br />
 
-							<ul class="event_cat_names">
-								<?php while ($r = $result->fetch_array ()): ?>
-								<li class="ec_<?php echo $r ['id'] ?>">
-									<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
-								</li>
-								<?php endwhile; ?>
-							</ul>
+								<ul class="event_cat_names">
+									<?php while ($r = $result->fetch_array ()): ?>
+									<li class="ec_<?php echo $r ['id'] ?>">
+										<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
+									</li>
+									<?php endwhile; ?>
+								</ul>
 
-							<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+							</fieldset>
 						</div>
 
 						<div class="cat_names_wrapper span3">
-							<?php
+							<fieldset>
+								<?php
 
-							$query = "SELECT * FROM contactcategories ORDER BY name";
-							$result = $db->query ($query);
+								$query = "SELECT * FROM contactcategories ORDER BY name";
+								$result = $db->query ($query);
 
-							?>
+								?>
 
-							<h3>Categorie Contatti</h3>
+								<legend>Contatti</legend>
+								<br />
 
-							<ul class="contacts_cat_names">
-								<?php while ($r = $result->fetch_array ()): ?>
-								<li class="cc_<?php echo $r ['id'] ?>">
-									<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
-								</li>
-								<?php endwhile; ?>
-							</ul>
+								<ul class="contacts_cat_names">
+									<?php while ($r = $result->fetch_array ()): ?>
+									<li class="cc_<?php echo $r ['id'] ?>">
+										<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
+									</li>
+									<?php endwhile; ?>
+								</ul>
 
-							<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+							</fieldset>
 						</div>
 					</div>
 
@@ -565,76 +571,78 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			</div>
 
 			<div style="display: none;" class="tabcontent" id="tab_content_5">
-				<form action="save_params.php" method="POST" class="configuration_parameters form-horizontal">
-					<fieldset>
-						<legend>Amministrazione</legend>
+				<div class="span7 offset1">
+					<form action="save_params.php" method="POST" class="configuration_parameters form-horizontal">
+						<fieldset>
+							<legend>Amministrazione</legend>
 
-						<div class="control-group">
-							<label class="control-label" for="startyear">Inizio Anno Corrente</label>
-							<div class="controls">
-								<input type="text" class="date" name="startyear" value="<?php echo getconf ('startyear') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="startyear">Inizio Anno Corrente</label>
+								<div class="controls">
+									<input type="text" class="date" name="startyear" value="<?php echo getconf ('startyear') ?>" />
+								</div>
 							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="endyear">Fine Anno Corrente</label>
-							<div class="controls">
-								<input type="text" class="date" name="endyear" value="<?php echo getconf ('endyear') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="endyear">Fine Anno Corrente</label>
+								<div class="controls">
+									<input type="text" class="date" name="endyear" value="<?php echo getconf ('endyear') ?>" />
+								</div>
 							</div>
-						</div>
-					</fieldset>
+						</fieldset>
 
-					<fieldset>
-						<legend>Interfaccia</legend>
+						<fieldset>
+							<legend>Interfaccia</legend>
 
-						<div class="control-group">
-							<label class="control-label" for="fontsize">Dimensione Caratteri</label>
-							<div class="controls">
-								<input type="text" class="numericvalue" name="fontsize" value="<?php echo getconf ('fontsize') ?>" /> pixel
+							<div class="control-group">
+								<label class="control-label" for="fontsize">Dimensione Caratteri</label>
+								<div class="controls">
+									<input type="text" class="numericvalue" name="fontsize" value="<?php echo getconf ('fontsize') ?>" /> pixel
+								</div>
 							</div>
-						</div>
-					</fieldset>
+						</fieldset>
 
-					<fieldset>
-						<legend>Mail</legend>
+						<fieldset>
+							<legend>Mail</legend>
 
-						<div class="control-group">
-							<label class="control-label" for="mailaddress">Indirizzo Mail</label>
-							<div class="controls">
-								<input type="text" name="mailaddress" value="<?php echo getconf ('mailaddress') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="mailaddress">Indirizzo Mail</label>
+								<div class="controls">
+									<input type="text" name="mailaddress" value="<?php echo getconf ('mailaddress') ?>" />
+								</div>
 							</div>
-						</div>
 
-						<div class="control-group">
-							<label class="control-label" for="smtpserver">Server SMTP</label>
-							<div class="controls">
-								<input type="text" name="smtpserver" value="<?php echo getconf ('smtpserver') ?>" />:<input type="text" size="6" name="smtpserverport" value="<?php echo getconf ('smtpserverport') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="smtpserver">Server SMTP</label>
+								<div class="controls">
+									<input type="text" name="smtpserver" value="<?php echo getconf ('smtpserver') ?>" />:<input type="text" size="6" name="smtpserverport" value="<?php echo getconf ('smtpserverport') ?>" class="span2" />
+								</div>
 							</div>
-						</div>
 
-						<div class="control-group">
-							<label class="control-label" for="smtpusername">Username</label>
-							<div class="controls">
-								<input type="text" name="smtpusername" value="<?php echo getconf ('smtpusername') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="smtpusername">Username</label>
+								<div class="controls">
+									<input type="text" name="smtpusername" value="<?php echo getconf ('smtpusername') ?>" />
+								</div>
 							</div>
-						</div>
 
-						<div class="control-group">
-							<label class="control-label" for="smtppassword">Password</label>
-							<div class="controls">
-								<input type="password" name="smtppassword" value="<?php echo getconf ('smtppassword') ?>" />
+							<div class="control-group">
+								<label class="control-label" for="smtppassword">Password</label>
+								<div class="controls">
+									<input type="password" name="smtppassword" value="<?php echo getconf ('smtppassword') ?>" />
+								</div>
 							</div>
-						</div>
 
-						<div class="control-group">
-							<label class="control-label" for="smtpssl">SSL</label>
-							<div class="controls">
-								<input type="checkbox" name="smtpssl" <?php if (getconf ('smtpssl') == 'true') echo ' checked="checked"' ?> />
+							<div class="control-group">
+								<label class="control-label" for="smtpssl">SSL</label>
+								<div class="controls">
+									<input type="checkbox" name="smtpssl" <?php if (getconf ('smtpssl') == 'true') echo ' checked="checked"' ?> />
+								</div>
 							</div>
-						</div>
-					</fieldset>
+						</fieldset>
 
-					<input type="submit" value="Salva" class="save_button btn btn-primary pull-right" />
-				</form>
+						<input type="submit" value="Salva" class="save_button btn btn-primary pull-right" />
+					</form>
+				</div>
 			</div>
 
 			<div style="display: none;" class="tabcontent" id="tab_content_6">
