@@ -392,8 +392,22 @@ $(document).ready (function () {
 
 	$('.contacts_list li').live ('click', function () {
 		toks = $(this).attr ('class').split ('_');
-		$.getJSON ('fetch_contacts.php?action=complete&id=' + toks [1], function (data) {
+		stat_s = $('.contact_editable .stats .statsstartdate').val ();
+		stat_e = $('.contact_editable .stats .statsenddate').val ();
+
+		$.getJSON ('fetch_contacts.php?action=complete&id=' + toks [1] + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
 			fillContactForm ('contact_editable', data);
+			fillContactStats ('contact_editable', data);
+		});
+	});
+
+	$('.contact_editable .stats .date').change (function () {
+		id = $('.contact_editable input[name=contactid]').val ();
+		stat_s = $('.contact_editable .stats .statsstartdate').val ();
+		stat_e = $('.contact_editable .stats .statsenddate').val ();
+
+		$.getJSON ('fetch_contacts.php?action=complete&id=' + id + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
+			fillContactStats ('contact_editable', data);
 		});
 	});
 
@@ -1089,6 +1103,22 @@ function fillContactForm (parentclass, data) {
 	$('.' + parentclass + ' input[name=contactmail]').val (data.mail);
 	$('.' + parentclass + ' input[name=contactweb]').val (data.web);
 	$('.' + parentclass + ' textarea[name=contactnotes]').val (data.notes);
+}
+
+function fillContactStats (parentclass, data) {
+	tab = $('.' + parentclass + ' .stats .results');
+	tab.empty ();
+
+	if (data.stats.rooms.length != 0) {
+		for (var r in data.stats.rooms)
+			tab.append ('<tr><td>' + r + '</td><td>' + data.stats.rooms [r] + ' ore</td></tr>');
+
+		tab.append ('<tr><td></td><td>Totale: ' + data.stats.topay + ' €</td></tr>');
+		tab.append ('<tr><td></td><td>Pagato: ' + data.stats.payed + ' €</td></tr>');
+	}
+	else {
+		tab.append ('<tr><td>Nessun evento registrato nel periodo selezionato</td></tr>');
+	}
 }
 
 function onNavClick (node, alter_weeks) {

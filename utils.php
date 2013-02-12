@@ -735,6 +735,19 @@ function remove_event_days ($id, $saved = null) {
 	}
 }
 
+function diff_hours ($e, $s) {
+	list ($ehour, $eminutes, $eseconds) = explode (':', $e);
+	list ($shour, $sminutes, $sseconds) = explode (':', $s);
+	$ret = $ehour - $shour;
+
+	if ($eminutes == 30)
+		$ret += 0.5;
+	if ($sminutes == 30)
+		$ret -= 0.5;
+
+	return $ret;
+}
+
 /***********************************************************************
 	CONTACTS
 */
@@ -765,6 +778,48 @@ function contact_to_json ($dbrow, $encode = true) {
 		return json_encode ($tmp);
 	else
 		return $tmp;
+}
+
+function contact_stats ($id, $start, $end) {
+	global $db;
+
+	$ret = new stdClass();
+
+	$s = date_formtodb ($start);
+	$e = date_formtodb ($end);
+
+	$query = "SELECT rooms.name, TIME(eventdates.startdate), TIME(eventdates.enddate)
+			FROM rooms, eventdates, eventrooms, events
+				WHERE events.owner = $id AND
+					eventdates.eventid = events.id AND
+					DATE(eventdates.startdate) > '$s' AND
+					DATE(eventdates.enddate) < '$e' AND
+					eventrooms.eventdateid = eventdates.id AND
+					rooms.id = eventrooms.roomid";
+	$result = $db->query ($query);
+
+	$ret->rooms = array ();
+
+	while ($ev = $result->fetch_array ()) {
+		if (array_key_exists ($ev [0], $ret->rooms) == false)
+			$ret->rooms [$ev [0]] = 0;
+
+		$ret->rooms [$ev [0]] += diff_hours ($ev [2], $ev [1]);
+	}
+
+	$query = "SELECT SUM(events.price), SUM(events.partprice)
+			FROM events
+				WHERE events.owner = $id AND
+					events.id IN (
+						SELECT eventid FROM eventdates WHERE
+							DATE(eventdates.startdate) > '$s' AND
+							DATE(eventdates.enddate) < '$e')";
+	$result = $db->query ($query);
+	$prices = $result->fetch_array ();
+	$ret->topay = $prices [0];
+	$ret->payed = $prices [1];
+
+	return $ret;
 }
 
 function contact_edit_form () {

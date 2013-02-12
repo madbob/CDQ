@@ -455,6 +455,20 @@ list ($y, $m, $d) = explode ('-', $current_week);
 									<input type="button" name="remove_<?php echo $id ?>" value="Elimina Contatto" class="remove_contact btn" />
 								</div>
 							</div>
+
+							<hr />
+
+							<div class="stats">
+								<div>
+									Dal <input type="text" class="statsstartdate date input-medium" value="<?php echo date ('d/m/Y', strtotime ('-1 year')) ?>">
+									Al <input type="text" class="statsenddate date input-medium" value="<?php echo date ('d/m/Y') ?>">
+								</div>
+
+								<br />
+
+								<table class="results table">
+								</table>
+							</div>
 						</div>
 					</div>
 

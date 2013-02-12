@@ -50,7 +50,13 @@ else if (array_key_exists ('action', $_GET) == true) {
 			$query = "SELECT * FROM contacts WHERE id = $id";
 			$results = $db->query ($query);
 			$row = $results->fetch_array ();
-			echo contact_to_json ($row);
+			$ret = contact_to_json ($row, false);
+
+			$s = $db->real_escape_string ($_GET ['statstart']);
+			$e = $db->real_escape_string ($_GET ['statend']);
+			$ret->stats = contact_stats ($id, $s, $e);
+
+			echo json_encode ($ret);
 			break;
 
 		case 'remove':

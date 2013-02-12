@@ -30,7 +30,7 @@ $query = "CREATE TABLE rooms (
 		position int default 0,
 		width float default 10,
 		visible boolean default true,
-		defaultprice float default 0
+		defaultprice decimal(6,2) default 0
 	)";
 mysql_query ($query) or die ("Impossibile creare tabella 'rooms': " . mysql_error ());
 
@@ -92,8 +92,8 @@ $query = "CREATE TABLE events (
 		hasvat boolean default true,
 		category int references eventcategories (id),
 		public boolean default true,
-		price float default 0,
-		partprice float default 0,
+		price decimal(6,2) default 0,
+		partprice decimal(6,2) default 0,
 		paystatus int default 0,
 		notes varchar(1000) default ''
 	)";
