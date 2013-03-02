@@ -202,11 +202,7 @@ $result = $db->query ($query);
 
 while ($col = $result->fetch_array ()) {
 	$rules = array ();
-
 	$rules [] = "width: 5.88%;";
-
-	if ($col ['visible'] == false)
-		$rules [] = "display: none;";
 
 	echo ".head_" . $col ['id'] . " {\n";
 	echo join ("\n", $rules);

@@ -721,7 +721,11 @@ function newEventDays () {
 }
 
 function showDialog (target) {
-	target.css ("top", (($(window).height () - target.outerHeight()) / 2) + $(window).scrollTop () + "px");
+	if (target.outerHeight () > ($(window).height ())
+		target.css ("top", "10px");
+	else
+		target.css ("top", (($(window).height () - target.outerHeight()) / 2) + $(window).scrollTop () + "px");
+
 	target.css ("left", (($(window).width () - target.outerWidth()) / 2) + $(window).scrollLeft () + "px");
 
 	var overlay = $("<div id='modal-overlay'></div>");
@@ -1023,6 +1027,17 @@ function loadCurrentData () {
 		typeclass = 'allocated_type_' + ev.type;
 
 		for (i = 0; i < ev.rooms.length; i++) {
+			/*
+				TODO	Questo e' per controllare se la
+					stanza di riferimento e'
+					visualizzata, in quanto potrebbe
+					anche essere stata disabilitata
+					successivamente, ma sarebbe da
+					rendere piu' furbo il controllo
+			*/
+			if ($('td.datecol input[name=roomid][value=' + ev.rooms [i] + ']').length == 0)
+				continue;
+
 			row = $('.daysep:has(input[value="' + ev.day + '"])').nextAll ('tr:has(td.datecol input[name=roomid][value=' + ev.rooms [i] + ']):first');
 
 			if (window.matchMedia) {
