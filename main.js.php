@@ -721,7 +721,7 @@ function newEventDays () {
 }
 
 function showDialog (target) {
-	if (target.outerHeight () > ($(window).height ())
+	if (target.outerHeight () > ($(window).height ()))
 		target.css ("top", "10px");
 	else
 		target.css ("top", (($(window).height () - target.outerHeight()) / 2) + $(window).scrollTop () + "px");

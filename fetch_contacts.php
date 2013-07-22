@@ -52,9 +52,11 @@ else if (array_key_exists ('action', $_GET) == true) {
 			$row = $results->fetch_array ();
 			$ret = contact_to_json ($row, false);
 
-			$s = $db->real_escape_string ($_GET ['statstart']);
-			$e = $db->real_escape_string ($_GET ['statend']);
-			$ret->stats = contact_stats ($id, $s, $e);
+			if (array_key_exists ('statstart', $_GET) == true && array_key_exists ('statend', $_GET) == true) {
+				$s = $db->real_escape_string ($_GET ['statstart']);
+				$e = $db->real_escape_string ($_GET ['statend']);
+				$ret->stats = contact_stats ($id, $s, $e);
+			}
 
 			echo json_encode ($ret);
 			break;
