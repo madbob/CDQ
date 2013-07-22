@@ -703,7 +703,7 @@ function room_properties_form ($id, $name, $price, $visible, $new = true) {
 			<div class="control-group">
 				<label class="control-label" for="remove_<?php echo $id ?>">Rimuovi</label>
 				<div class="controls">
-					<input type="button" name="remove_<?php echo $id ?>" value="Elimina Sala" class="remove_column btn" />
+					<input type="button" name="remove_<?php echo $id ?>" value="Elimina Sala" class="remove_room btn" />
 				</div>
 			</div>
 		</fieldset>

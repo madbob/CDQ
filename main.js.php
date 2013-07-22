@@ -471,7 +471,7 @@ $(document).ready (function () {
 	});
 
 	$(".rooms_descriptions .name_value").live ('keyup', function (event) {
-		var index = $(this).parent ().parent ().parent ().attr ("id").split ("properties_") [1];
+		var index = $(this).parents ('li').attr ("id").split ("properties_") [1];
 		$(".rooms_names #sorting_" + index + " span").html ($(this).val ());
 	});
 

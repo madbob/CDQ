@@ -26,6 +26,7 @@ if (array_key_exists ('action', $_GET) == true) {
 }
 else {
 	$success = true;
+	$ids = array ();
 
 	foreach ($_POST as $key => $value) {
 		if (strncmp ($key, 'name_', 5) == 0) {
@@ -34,11 +35,6 @@ else {
 			$name = $_POST [$key];
 			$price = $_POST ['price_' . $id];
 			$visible = (array_key_exists ('visible_' . $id, $_POST) == true ? 'true' : 'false');
-
-			if ($type == 'boolean')
-				$default = (array_key_exists ('default_' . $id, $_POST) == true ? true : false);
-			else
-				$default = $_POST ['default_' . $id];
 
 			$query = "SELECT id FROM rooms WHERE id = $id";
 			$result = $db->query ($query);
@@ -52,6 +48,8 @@ else {
 					$success = false;
 					break;
 				}
+
+				$ids [] = $db->insert_id;
 			}
 			else {
 				$query = "UPDATE rooms SET name = '$name', defaultprice = '$price', visible = $visible WHERE id = $id";
@@ -59,22 +57,27 @@ else {
 					$success = false;
 					break;
 				}
+
+				$ids [] = $id;
 			}
-
-			$query = "SELECT COUNT(id) FROM rooms WHERE visible = true";
-			$num = db_get_value ($query);
-
-			/*
-				Questa formula e' inventata di sana pianta e
-				ricavata in modo empirico.
-				Occorre tener conto non solo del numero di
-				casella ma anche (e soprattutto) del loro
-				padding, che sfalsa tutti i conti
-			*/
-			$query = "UPDATE rooms SET width = " . (round ((100 - 5) / $num, 2) - 0.1) . " WHERE visible = true";
-			$db->query ($query);
 		}
 	}
+
+	$query = "UPDATE rooms SET visible = false WHERE id NOT IN (" . join (', ', $ids) . ")";
+	$db->query ($query);
+
+	$query = "SELECT COUNT(id) FROM rooms WHERE visible = true";
+	$num = db_get_value ($query);
+
+	/*
+		Questa formula e' inventata di sana pianta e
+		ricavata in modo empirico.
+		Occorre tener conto non solo del numero di
+		casella ma anche (e soprattutto) del loro
+		padding, che sfalsa tutti i conti
+	*/
+	$query = "UPDATE rooms SET width = " . (round ((100 - 5) / $num, 2) - 0.1) . " WHERE visible = true";
+	$db->query ($query);
 
 	if ($success == true)
 		$message = "Sale salvate correttamente.";
