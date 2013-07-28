@@ -150,7 +150,7 @@ require_once ('utils.php');
 
 .allocated {
 	position: absolute;
-	border: 1px solid #DDDDDD;
+	border: 1px solid #000000;
 	cursor: pointer;
 	cursor: hand;
 	font-size: <?php echo getconf ('fontsize') ?>px;
@@ -170,6 +170,14 @@ require_once ('utils.php');
 
 .allocated_type_2 {
 	background-color: #DDF;
+}
+
+.unpayed {
+	font-style: italic;
+}
+
+.unconfirmed {
+	color: #FF0000;
 }
 
 .console {

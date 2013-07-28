@@ -26,6 +26,15 @@ function get_details_by_eventdate ($id, $type) {
 	return $ret;
 }
 
+function my_array_search ($search, $array) {
+	foreach ($array as $a) {
+		if ($a == $search)
+			return true;
+	}
+
+	return false;
+}
+
 function save_details_by_eventdate ($day, $type) {
 	if (array_key_exists ($type . 's', $day) == false)
 		return;
@@ -41,7 +50,7 @@ function save_details_by_eventdate ($day, $type) {
 		if ($a == -1)
 			continue;
 
-		if (array_search ((int) $a, $current) == false) {
+		if (my_array_search ($a, $current) == false) {
 			$query = "INSERT INTO event${type}s (eventdateid, ${type}id) VALUES ($id, $a)";
 			exec_nr_query ($query);
 		}
@@ -639,7 +648,8 @@ function do_week ($week) {
 		$weekday->date = "$d/$m/$y";
 		$weekdays [] = $weekday;
 
-		$query = "SELECT eventdates.id AS id, events.title AS title, events.type AS type, DATE(eventdates.startdate) AS day,
+		$query = "SELECT eventdates.id AS id, events.title AS title, events.type AS type,
+					events.paystatus AS paystatus, events.unconfirmed AS unconfirmed, DATE(eventdates.startdate) AS day,
 					HOUR(eventdates.startdate) AS start, MINUTE(eventdates.startdate) AS startmin,
 					HOUR(eventdates.enddate) AS end, MINUTE(eventdates.enddate) AS endmin
 				FROM events, eventdates
@@ -653,6 +663,8 @@ function do_week ($week) {
 			$ev->id = $d ['id'];
 			$ev->name = $d ['title'];
 			$ev->type = $d ['type'];
+			$ev->paystatus = $d ['paystatus'];
+			$ev->unconfirmed = $d ['unconfirmed'];
 			$ev->day = date_dbtoform ($d ['day']);
 			$ev->shour = $d ['start'] . ':' . str_pad ($d ['startmin'], 2, '0');
 			$ev->ehour = $d ['end'] . ':' . str_pad ($d ['endmin'], 2, '0');

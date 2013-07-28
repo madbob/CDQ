@@ -95,6 +95,7 @@ $query = "CREATE TABLE events (
 		price decimal(6,2) default 0,
 		partprice decimal(6,2) default 0,
 		paystatus int default 0,
+		unconfirmed int default 0,
 		notes varchar(1000) default ''
 	)";
 mysql_query ($query) or die ("Impossibile creare tabella 'events': " . mysql_error ());

@@ -193,10 +193,10 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			<div style="display: block;" class="tabcontent" id="tab_content_1">
 				<div class="row">
 					<form action="" method="POST" class="events_parameters form-horizontal">
-							<fieldset class="span7 contact_for_event">
-								<?php contact_edit_form () ?>
-								<a href="#" class="btn pull-right reset_event_contact">Reset</a>
-							</fieldset>
+						<fieldset class="span7 contact_for_event">
+							<?php contact_edit_form () ?>
+							<a href="#" class="btn pull-right reset_event_contact">Reset</a>
+						</fieldset>
 					</form>
 				</div>
 
@@ -242,6 +242,14 @@ list ($y, $m, $d) = explode ('-', $current_week);
 								<div class="controls">
 									<label class="checkbox">
 										<input type="checkbox" name="private" />
+									</label>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="private">Da Confermare</label>
+								<div class="controls">
+									<label class="checkbox">
+										<input type="checkbox" name="unconfirmed" />
 									</label>
 								</div>
 							</div>

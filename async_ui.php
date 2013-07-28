@@ -201,18 +201,7 @@ switch ($_GET ['type']) {
 					}
 				}
 
-				$vat = ($total * 21) / 100;
-				if ($managed == false)
-					$total += $vat;
-
 				?>
-
-				<div class="control-group">
-					<label class="control-label" for="vat">IVA</label>
-					<div class="controls">
-						<input name="vat" class="span1" disabled="disabled" type="text" value="<?php echo $vat ?>" />
-					</div>
-				</div>
 
 				<hr />
 

@@ -17,7 +17,7 @@ switch ($_GET ['action']) {
 
 		$query = "SELECT events.id AS id, events.title AS title, events.type AS type, events.category AS category, events.public AS public,
 					eventdates.id AS dayid, DATE(eventdates.startdate) AS day, DATE_FORMAT(eventdates.startdate, '%H:%i') AS shour, DATE_FORMAT(eventdates.enddate, '%H:%i') AS ehour,
-					events.price as price, events.partprice as partprice, events.paystatus as paystatus
+					events.price as price, events.partprice as partprice, events.paystatus as paystatus, events.unconfirmed as unconfirmed
 				FROM events, eventdates
 				WHERE eventdates.id = $eventid AND
 					eventdates.eventid = events.id";
@@ -38,6 +38,7 @@ switch ($_GET ['action']) {
 		$tmp->price = $date ['price'];
 		$tmp->partprice = $date ['partprice'];
 		$tmp->paystatus = $date ['paystatus'];
+		$tmp->unconfirmed = $date ['unconfirmed'];
 
 		echo json_encode ($tmp);
 		break;

@@ -286,10 +286,13 @@ $(document).ready (function () {
 
 		if ($('.details_for_price select[name=paystatus] option:selected').val () == 0)
 			paystatus = 0;
-		else if ($('.details_for_price input[name=payed]').is ('checked'))
+		else if ($('.details_for_price input[name=payed]').is (':checked'))
 			paystatus = 2;
 		else
 			paystatus = 1;
+
+		private_e = $('.details_for_event input[name=private]').is (':checked') ? 'true' : 'false';
+		unconfirmed = $('.details_for_event input[name=unconfirmed]').is (':checked') ? 'true' : 'false';
 
 		if (id == 'new') {
 			type = $('#eventtypeseltabs div[class~=tab-pane][class~=active]').index ();
@@ -299,7 +302,8 @@ $(document).ready (function () {
 				contact: c,
 				id: 'new',
 				title: title,
-				private_event: $('.details_for_event input[name=private]').is ('checked') ? 'true' : 'false',
+				private_event: private_e,
+				unconfirmed: unconfirmed,
 				category: $('.details_for_event select[name=cat] option:selected').val (),
 				price: $('.details_for_price input[name=pricetotal]').val (),
 				partprice: $('.details_for_price input[name=pricepayed]').val (),
@@ -325,7 +329,8 @@ $(document).ready (function () {
 				contact: c,
 				id: id,
 				title: title,
-				private_event: $('.details_for_event input[name=private]').is ('checked') ? 'true' : 'false',
+				private_event: private_e,
+				unconfirmed: unconfirmed,
 				category: $('.details_for_event select[name=cat] option:selected').val (),
 				price: $('.details_for_price input[name=pricetotal]').val (),
 				partprice: $('.details_for_price input[name=pricepayed]').val (),
@@ -759,6 +764,7 @@ function reset_event_edit () {
 	$('.editevent .tabs .tab:nth-child(1)').click ();
 	$('.editevent input[name=eventid]').val ('new');
 	$('.editevent input[name=private]').removeAttr ('checked');
+	$('.editevent input[name=unconfirmed]').removeAttr ('checked');
 	$('.editevent input[type=text]').val ('');
 	$('.editevent .dupreplicableday').remove ();
 	$('.editevent #eventtypesel a:first').tab ('show');
@@ -836,10 +842,15 @@ function show_existing_event_edit (node) {
 		$('.details_for_event input[name=eventtype]').val (data.type);
 		$('.details_for_event input[name=title]').val (data.title);
 		$('.details_for_event select[name=category] option[value=' + data.category + ']').attr ('selected', 'selected');
-		if (data.private_event == true)
-			$('.details_for_event input[name=private]').attr ('checked', 'checked');
-		else
-			$('.details_for_event input[name=private]').removeAttr ('checked');
+
+		switchCheckbox ('.details_for_event input[name=private]', data.private_event);
+		switchCheckbox ('.details_for_event input[name=unconfirmed]', data.unconfirmed);
+
+		/*
+			Il flag "Pagato" viene settato nel form direttamente
+			dalla chiamata "check_payment" eseguita a parte in
+			recomputeCost()
+		*/
 
 		setupDayBox ($('.single'), data);
 		recomputeCost ();
@@ -862,6 +873,13 @@ function select_rooms (target, rooms) {
 			s = ns;
 		}
 	}
+}
+
+function switchCheckbox (name, value) {
+	if (value == true)
+		$(name).attr ('checked', 'checked');
+	else
+		$(name).removeAttr ('checked');
 }
 
 function adjustPickers (box) {
@@ -1025,6 +1043,10 @@ function loadCurrentData () {
 		}
 
 		typeclass = 'allocated_type_' + ev.type;
+		if (ev.paystatus == 1)
+			typeclass = typeclass + ' unpayed';
+		if (ev.unconfirmed == 1)
+			typeclass = typeclass + ' unconfirmed';
 
 		for (i = 0; i < ev.rooms.length; i++) {
 			/*

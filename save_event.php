@@ -25,13 +25,14 @@ $vat = true;
 $price = $_POST ['price'];
 $partprice = $_POST ['partprice'];
 $paystatus = $_POST ['paystatus'];
+$unconfirmed = $_POST ['unconfirmed'];
 $notes = '';
 
 if ($id == 'new') {
 	$type = $_POST ['type'];
 
-	$query = "INSERT INTO events (type, title, owner, hasvat, category, public, price, partprice, paystatus, notes)
-			VALUES ($type, '$title', $contactid, $vat, $category, $public, $price, $partprice, $paystatus, '$notes')";
+	$query = "INSERT INTO events (type, title, owner, hasvat, category, public, price, partprice, paystatus, unconfirmed, notes)
+			VALUES ($type, '$title', $contactid, $vat, $category, $public, $price, $partprice, $paystatus, $unconfirmed, '$notes')";
 	exec_nr_query ($query);
 
 	$eventid = $db->insert_id;
@@ -53,7 +54,7 @@ else {
 	$eventid = $id;
 
 	$query = "UPDATE events SET title = '$title', category = $category, public = $public,
-			price = $price, partprice = $partprice, paystatus = $paystatus WHERE id = $eventid";
+			price = $price, partprice = $partprice, paystatus = $paystatus, unconfirmed = $unconfirmed WHERE id = $eventid";
 	exec_nr_query ($query);
 
 	$ids = array ();
@@ -79,7 +80,7 @@ else {
 		$ids [] = $dayid;
 	}
 
-	if ($_POST ['edittype'] == 'full')
+	if ($_POST ['changetype'] == 'full')
 		remove_event_days ($eventid, $ids);
 }
 
