@@ -315,7 +315,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 											<div class="control-group">
 												<label class="control-label" for="verify">Verifica</label>
 												<div class="controls">
-													<a href="#" class="btn verifydays">Controlla Giorni</a>
+													<a href="#" class="btn btn-primary verifydays">Controlla Giorni</a>
 												</div>
 											</div>
 										</div>

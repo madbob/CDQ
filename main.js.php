@@ -83,6 +83,9 @@ $(document).ready (function () {
 	*/
 
 	$('.next_button').click (function () {
+		if ($(this).hasClass ('btn-primary') == false)
+			return false;
+
 		var ind = $(this).parents ('.tabcontent').index ();
 		$(this).parents ('.tabscontainer').find ('.tabs .tab:nth-child(' + (ind + 2) + ')').click ();
 	});
@@ -107,6 +110,11 @@ $(document).ready (function () {
 	$('#eventtypesel a').click (function (e) {
 		e.preventDefault ();
 		$(this).tab ('show');
+
+		if ($(this).attr ('href') == '#eventcycle')
+			enableNextButton (false);
+		else
+			enableNextButton (true);
 	});
 
 	$('select[name=room]').live ('change', function () {
@@ -212,6 +220,7 @@ $(document).ready (function () {
 			$('#eventcycle .original').hide ();
 			$('#eventcycle .final').empty ().show ().append (data);
 			recomputeCost ();
+			enableNextButton (true);
 		});
 
 		return false;
@@ -654,6 +663,13 @@ $(document).ready (function () {
 		}
 	});
 });
+
+function enableNextButton (enable) {
+	if (enable == false)
+		$('.next_button').removeClass ('btn-primary');
+	else
+		$('.next_button').addClass ('btn-primary');
+}
 
 function addDayBox (node) {
 	var box = node.find ('.replicableday').clone (false);
