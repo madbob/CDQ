@@ -436,6 +436,10 @@ list ($y, $m, $d) = explode ('-', $current_week);
 				<form action="" method="POST" class="configuration_contacts form-horizontal">
 					<div class="row">
 						<div class="contacts_list span3">
+							<input type="text" class="filter_ul" placeholder="Filtra per nome..." />
+
+							<hr />
+
 							<ul>
 								<?php
 

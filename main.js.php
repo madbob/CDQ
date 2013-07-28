@@ -404,6 +404,24 @@ $(document).ready (function () {
 		Pannello configurazioni
 	*/
 
+	$('.filter_ul').keyup (function () {
+		var t = $(this).val ();
+
+		if (t == '') {
+			$(this).siblings ('ul').find ('li').each (function () {
+				$(this).show ();
+			});
+		}
+		else {
+			$(this).siblings ('ul').find ('li').each (function () {
+				if ($(this).text ().indexOf (t) == -1)
+					$(this).hide ();
+				else
+					$(this).show ();
+			});
+		}
+	});
+
 	$('.contacts_list li').live ('click', function () {
 		toks = $(this).attr ('class').split ('_');
 		stat_s = $('.contact_editable .stats .statsstartdate').val ();
