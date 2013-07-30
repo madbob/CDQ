@@ -1,18 +1,19 @@
 <?php
 
 require_once ('db.php');
+global $db;
 
 $query = "CREATE TABLE config (
 		id int auto_increment primary key,
 		name varchar(100) default '',
 		value varchar(100) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'config': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'config': " . $db->error);
 
 $query = "INSERT INTO config (name, value) VALUES ('fontsize', '10')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'config': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'config': " . $db->error);
 $query = "INSERT INTO config (name, value) VALUES ('pagesize', '500')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'config': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'config': " . $db->error);
 
 
 $query = "CREATE TABLE users (
@@ -21,7 +22,7 @@ $query = "CREATE TABLE users (
 		password varchar(100) default '',
 		permissions int default 0
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'users': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'users': " . $db->error);
 
 
 $query = "CREATE TABLE rooms (
@@ -32,26 +33,26 @@ $query = "CREATE TABLE rooms (
 		visible boolean default true,
 		defaultprice decimal(6,2) default 0
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'rooms': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'rooms': " . $db->error);
 
 
 $query = "CREATE TABLE materials (
 		id int auto_increment primary key,
 		name varchar(100) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'materials': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'materials': " . $db->error);
 
 
 $query = "CREATE TABLE contactcategories (
 		id int auto_increment primary key,
 		name varchar(100) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'contactcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'contactcategories': " . $db->error);
 
 $query = "INSERT INTO contactcategories (name) VALUES ('Associazione')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'contactcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'contactcategories': " . $db->error);
 $query = "INSERT INTO contactcategories (name) VALUES ('Privato')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'contactcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'contactcategories': " . $db->error);
 
 
 $query = "CREATE TABLE contacts (
@@ -65,23 +66,23 @@ $query = "CREATE TABLE contacts (
 		phone varchar(100) default '',
 		notes varchar(1000) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'contacts': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'contacts': " . $db->error);
 
 
 $query = "CREATE TABLE eventcategories (
 		id int auto_increment primary key,
 		name varchar(100) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'eventrooms': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'eventrooms': " . $db->error);
 
 $query = "INSERT INTO eventcategories (name) VALUES ('Festa')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . $db->error);
 $query = "INSERT INTO eventcategories (name) VALUES ('Riunione')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . $db->error);
 $query = "INSERT INTO eventcategories (name) VALUES ('Corso')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . $db->error);
 $query = "INSERT INTO eventcategories (name) VALUES ('Conferenza')";
-mysql_query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . mysql_error ());
+$db->query ($query) or die ("Impossibile popolare tabella 'eventcategories': " . $db->error);
 
 
 $query = "CREATE TABLE events (
@@ -98,7 +99,7 @@ $query = "CREATE TABLE events (
 		unconfirmed int default 0,
 		notes varchar(1000) default ''
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'events': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'events': " . $db->error);
 
 
 $query = "CREATE TABLE eventdates (
@@ -107,7 +108,7 @@ $query = "CREATE TABLE eventdates (
 		startdate datetime,
 		enddate datetime
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'eventdates': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'eventdates': " . $db->error);
 
 
 $query = "CREATE TABLE eventrooms (
@@ -115,7 +116,7 @@ $query = "CREATE TABLE eventrooms (
 		eventdateid int references eventdates (id),
 		roomid int references rooms (id)
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'eventrooms': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'eventrooms': " . $db->error);
 
 
 $query = "CREATE TABLE eventmaterials (
@@ -123,7 +124,7 @@ $query = "CREATE TABLE eventmaterials (
 		eventdateid int references eventdates (id),
 		materialid int references materials (id)
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'eventmaterials': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'eventmaterials': " . $db->error);
 
 
 $query = "CREATE TABLE current_sessions (
@@ -132,7 +133,7 @@ $query = "CREATE TABLE current_sessions (
 		init date,
 		session_id varchar(100)
 	)";
-mysql_query ($query) or die ("Impossibile creare tabella 'current_sessions': " . mysql_error ());
+$db->query ($query) or die ("Impossibile creare tabella 'current_sessions': " . $db->error);
 
 ?>
 
