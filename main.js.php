@@ -111,7 +111,9 @@ $(document).ready (function () {
 		e.preventDefault ();
 		$(this).tab ('show');
 
-		if ($(this).attr ('href') == '#eventcycle')
+		id = $('.editevent input[name=eventid]').val ();
+
+		if ($(this).attr ('href') == '#eventcycle' && id == 'new')
 			enableNextButton (false);
 		else
 			enableNextButton (true);
@@ -327,12 +329,7 @@ $(document).ready (function () {
 		}
 		else {
 			edittype = $('.editevent input[name=edittype]').val ();
-			if (edittype == 'day')
-				node = $('.single');
-			else
-				node = $('.full');
-
-			days.push (eventDayAttributes (node));
+			days = oldEventDays ();
 
 			$.post ('save_event.php', {
 				contact: c,
@@ -398,6 +395,26 @@ $(document).ready (function () {
 			$(this).siblings ('.paystatus1').hide ();
 		else
 			$(this).siblings ('.paystatus1').show ();
+	});
+
+	$('.modifyall').live ('click', function () {
+		node = $('.propagate_modify');
+
+		rooms = new Array ();
+		node.find ('.roomsel select[name=room] option:selected').each (function () {
+			rooms.push ($(this).val ());
+		});
+
+		shour = node.find ('input[name=shour]').val ();
+		ehour = node.find ('input[name=ehour]').val ();
+
+		node.siblings ('div').each (function () {
+			$(this).find ('input[name=shour]').val (shour);
+			$(this).find ('input[name=ehour]').val (ehour);
+			select_rooms ($(this).find ('.roomsel'), rooms);
+		});
+
+		return false;
 	});
 
 	/***********************************************************************
@@ -705,6 +722,11 @@ function setupDayBox (node, info) {
 	node.find ('input[name=shour]').val (info.shour);
 	node.find ('input[name=ehour]').val (info.ehour);
 	select_rooms (node.find ('.roomsel'), info.rooms);
+
+	if (info.type == 0)
+		node.find ('.modevent').hide ();
+	else
+		node.find ('.modevent').show ();
 }
 
 function eventDayAttributes (node) {
@@ -748,11 +770,24 @@ function newEventDays () {
 				days.push (eventDayAttributes ($(this)));
 			});
 			break;
+	}
 
-		case 2:
-			/*
-				TODO
-			*/
+	return days;
+}
+
+function oldEventDays () {
+	edittype = $('.editevent input[name=edittype]').val ();
+	days = new Array ();
+
+	switch (edittype) {
+		case 'day':
+			days.push (eventDayAttributes ($('.single')));
+			break;
+
+		case 'full':
+			$('#eventcycle .final .replicableday, #eventcycle .final .dupreplicableday').each (function () {
+				days.push (eventDayAttributes ($(this)));
+			});
 			break;
 	}
 
@@ -1154,14 +1189,14 @@ function syncContents () {
 
 			$('.contacts_list ul li').each (function () {
 				if ($(this).text () > d.name) {
-					$(this).before ('<li class="contact_' + c.id + '">' + c.name + '</li>');
+					$(this).before ('<li class="contact_' + d.id + '">' + d.name + '</li>');
 					found = true;
 					return false;
 				}
 			});
 
 			if (found == true)
-				$('.contacts_list ul').append ('<li class="contact_' + c.id + '">' + c.name + '</li>');
+				$('.contacts_list ul').append ('<li class="contact_' + d.id + '">' + d.name + '</li>');
 		}
 	});	
 }

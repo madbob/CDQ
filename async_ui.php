@@ -83,6 +83,26 @@ switch ($_GET ['type']) {
 
 		$classname = 'replicableday';
 
+		?>
+
+		<p>
+			Edita questa sezione per propagare le stesse correzioni a tutti i giorni, oppure modifica solo i giorni che servono.
+			In entrambi i casi, ricorda di salvare!
+		</p>
+
+		<div class="propagate_modify">
+			<?php
+			hour_selector (0, 0);
+			rooms_selector_by_eventdate (-1);
+			?>
+
+			<a href="#" class="btn pull-right modifyall">Modifica Tutto</a>
+			<br />
+			<hr />
+		</div>
+
+		<?php
+
 		while ($date = $result->fetch_array ()) {
 			?>
 
