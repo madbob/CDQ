@@ -133,12 +133,12 @@ switch ($_GET ['type']) {
 	case 'check_payment':
 		global $db;
 
-		if ($_GET ['id'] != 'new') {
+		if ($_POST ['id'] != 'new') {
 			$managed = true;
 
 			$query = "SELECT price, partprice, paystatus
 					FROM events
-					WHERE id = " . $_GET ['id'];
+					WHERE id = " . $_POST ['id'];
 			$result = $db->query ($query);
 			$data = $result->fetch_array ();
 
@@ -148,7 +148,7 @@ switch ($_GET ['type']) {
 
 			$query = "SELECT id, HOUR(startdate) as sh, MINUTE(startdate) as sm, HOUR(enddate) as eh, MINUTE(enddate) as em
 					FROM eventdates
-					WHERE eventid = " . $_GET ['id'];
+					WHERE eventid = " . $_POST ['id'];
 			$result = $db->query ($query);
 
 			while ($data = $result->fetch_array ()) {
@@ -172,7 +172,7 @@ switch ($_GET ['type']) {
 			$total = 0;
 			$payed = 0;
 			$status = 0;
-			$days = $_GET ['days'];
+			$days = $_POST ['days'];
 		}
 
 		?>

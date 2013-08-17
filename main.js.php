@@ -200,25 +200,8 @@ $(document).ready (function () {
 		}
 
 		start = $('#eventcycle input[name=start]').val ();
-		onmonth = $('#eventcycle .monthpos .active').index ();
-		onweek = $('#eventcycle .weekpos .active').index ();
 
-		weekdays = new Array ();
-		$('#eventcycle .replicableweekday').each (function () {
-			var rooms = new Array ();
-			$(this).find ('.roomsel select[name=room] option:selected').each (function () {
-				rooms.push ($(this).val ());
-			});
-
-			var materials = new Array ();
-			$(this).find ('.materialsel select[name=material] option:selected').each (function () {
-				materials.push ($(this).val ());
-			});
-
-			weekdays.push ($(this).find ('select[name=weekday]').val () + "|" + $(this).find ('input[name=shour]').val () + "|" + $(this).find ('input[name=ehour]').val () + "|" + rooms.join (',') + "|" + materials.join (','));
-		});
-
-		$.get ('async_ui.php?type=check_days&start=' + start + '&weekdays=' + weekdays.join (';') + '&repeats=' + repeats + '&onmonth=' + onmonth + '&onweek=' + onweek, function (data) {
+		$.get ('async_ui.php?type=check_days&start=' + start + '&repeats=' + repeats + '&' + ciclycStockInfo (), function (data) {
 			$('#eventcycle .original').hide ();
 			$('#eventcycle .final').empty ().show ().append (data);
 			recomputeCost ();
@@ -228,30 +211,21 @@ $(document).ready (function () {
 		return false;
 	});
 
-	$('.verifydaysyear').click (function () {
-		repeats = -1;
-		onmonth = $('#eventpermanent .monthpos .active').index ();
-		onweek = $('#eventpermanent .weekpos .active').index ();
-
-		weekdays = new Array ();
-		$('#eventpermanent .replicableweekday').each (function () {
-			var rooms = new Array ();
-			$(this).find ('.roomsel select[name=room] option:selected').each (function () {
-				rooms.push ($(this).val ());
-			});
-
-			var materials = new Array ();
-			$(this).find ('.materialsel select[name=material] option:selected').each (function () {
-				materials.push ($(this).val ());
-			});
-
-			weekdays.push ($(this).find ('select[name=weekday]').val () + "|" + $(this).find ('input[name=shour]').val () + "|" + $(this).find ('input[name=ehour]').val () + "|" + rooms.join (',') + "|" + materials.join (','));
-		});
-
-		$.get ('async_ui.php?type=check_days&start=all&weekdays=' + weekdays.join (';') + '&repeats=' + repeats + '&onmonth=' + onmonth + '&onweek=' + onweek, function (data) {
-			$('#eventpermanent .original').hide ();
-			$('#eventpermanent .final').empty ().show ().append (data);
+	$('.permanent').click (function () {
+		$.get ('async_ui.php?type=check_days&repeats=-1&' + ciclycStockInfo (), function (data) {
+			$('#eventcycle .original').hide ();
+			$('#eventcycle .final').empty ().show ().append (data);
 			recomputeCost ();
+			enableNextButton (true);
+
+			/*
+				Forzo il primo giorno nella casella relativa, il cui contenuto
+				verra' spedito in fase di salvataggio.
+				In questo caso non e' necessario forzare anche il numero di
+				settimane, se non viene indicato si prende comunque tutto l'anno
+			*/
+			sday = $('#eventcycle .final input[name=start]:first').val ();
+			$('#eventcycle .original input[name=start]').val (sday);
 		});
 
 		return false;
@@ -267,12 +241,14 @@ $(document).ready (function () {
 	});
 
 	$('.remove_existing_event').click (function () {
-		var eventid = $('.editevent input[name=eventid]').val ();
+		if (confirm ("Sicuro di voler eliminare interamente questo evento (tutti i giorni inclusi)?") == true) {
+			var eventid = $('.editevent input[name=eventid]').val ();
 
-		$.getJSON ('fetch_event.php?action=removeevent&id=' + eventid, function (data) {
-			closeDialog ($(".editevent"));
-			loadCurrentPage ();
-		});
+			$.getJSON ('fetch_event.php?action=removeevent&id=' + eventid, function (data) {
+				closeDialog ($(".editevent"));
+				loadCurrentPage ();
+			});
+		}
 	});
 
 	$('.back_cycle').live ('click', function () {
@@ -552,7 +528,7 @@ $(document).ready (function () {
 	});
 
 	$('.add_button').click (function () {
-		$(this).siblings ('ul').append ('<li class="new"><input value="" class="span2" /> <img class="remove_button" src="img/remove.png" /></li>');
+		$(this).siblings ('ul').append ('<li class="new"><input type="text" value="" class="span2" /> <img class="remove_button" src="img/remove.png" /></li>');
 	});
 
 	$('.remove_button').live ('click', function () {
@@ -699,6 +675,28 @@ $(document).ready (function () {
 	});
 });
 
+function ciclycStockInfo () {
+	onmonth = $('#eventcycle .monthpos .active').index ();
+	onweek = $('#eventcycle .weekpos .active').index ();
+
+	weekdays = new Array ();
+	$('#eventcycle .replicableweekday').each (function () {
+		var rooms = new Array ();
+		$(this).find ('.roomsel select[name=room] option:selected').each (function () {
+			rooms.push ($(this).val ());
+		});
+
+		var materials = new Array ();
+		$(this).find ('.materialsel select[name=material] option:selected').each (function () {
+			materials.push ($(this).val ());
+		});
+
+		weekdays.push ($(this).find ('select[name=weekday]').val () + "|" + $(this).find ('input[name=shour]').val () + "|" + $(this).find ('input[name=ehour]').val () + "|" + rooms.join (',') + "|" + materials.join (','));
+	});
+
+	return 'weekdays=' + weekdays.join (';') + '&onmonth=' + onmonth + '&onweek=' + onweek;
+}
+
 function enableNextButton (enable) {
 	if (enable == false)
 		$('.next_button').removeClass ('btn-primary');
@@ -760,17 +758,17 @@ function newEventDays () {
 
 	switch (type) {
 		case 0:
-			$('#eventsingleday .replicableday, #eventsingleday .dupreplicableday').each (function () {
-				days.push (eventDayAttributes ($(this)));
-			});
+			filter = '#eventsingleday .replicableday, #eventsingleday .dupreplicableday';
 			break;
 
 		case 1:
-			$('#eventcycle .final .replicableday, #eventcycle .final .dupreplicableday').each (function () {
-				days.push (eventDayAttributes ($(this)));
-			});
+			filter = '#eventcycle .final .replicableday, #eventcycle .final .dupreplicableday';
 			break;
 	}
+
+	$(filter).each (function () {
+		days.push (eventDayAttributes ($(this)));
+	});
 
 	return days;
 }
@@ -1244,7 +1242,7 @@ function recomputeCost () {
 	$('.details_for_price > select').remove ();
 	$('.details_for_price .paystatus1').remove ();
 
-	$.get ('async_ui.php?type=check_payment', {days: days, id: id, status: status}, function (data) {
+	$.post ('async_ui.php?type=check_payment', {days: days, id: id, status: status}, function (data) {
 		$('.details_for_price').append (data);
 	});
 }

@@ -3,6 +3,24 @@
 
 <?php
 
+/*
+
+- la stampa non sembra funzionare
+
+- inoltre, sempre per gli eventi ciclici, mi sembra non vengano salvate le modifiche fatte solo per alcuni giorni della serie
+
+- che succede in caso di uso contemporaneo da parte di più utenti? si rischia di perdere le modifiche? va usato un per volta?
+
+- credo ci sia un problema nel caricamento di eventi particolarmente "pesanti"; per es. un evento che ha luogo per 5 giorni la settimana per 30 settimane non viene salvato
+
+- per gli eventi ciclici che stanno in più giorni e in sale diverse ci sono problemi nel salvataggio dei dati (sembra riporti il salvataggio sempre al primo giorno)
+
+- se si aggiunge una categoria a tutti gli eventi (ad es. abbiamo aggiunto la categoria "sportello"), tutti gli eventi già caricati cambiano automaticamente la propria
+
+- se possibile, nella gestione prezzi delle sale sarebbe bello poter differenziare a tendina la tipologia di prezzo. noi abbiamo infatti un listino diversificato per 3 tipologie: evento estemporaneo; evento ciclico gratis per il pubblico; evento ciclico a pagamento per il pubblico.
+
+*/
+
 require_once ('login.php');
 require_once ('utils.php');
 
@@ -258,7 +276,6 @@ list ($y, $m, $d) = explode ('-', $current_week);
 								<ul class="nav nav-tabs" id="eventtypesel">
 									<li class="active"><a href="#eventsingleday">Evento Occasionale</a></li>
 									<li><a href="#eventcycle">Evento Ciclico</a></li>
-									<li><a href="#eventpermanent">Evento Permanente</a></li>
 								</ul>
 
 								<div class="tab-content" id="eventtypeseltabs">
@@ -290,6 +307,10 @@ list ($y, $m, $d) = explode ('-', $current_week);
 											<div class="replicableweekday">
 												<hr />
 
+												<p class="alert alert-info">
+													Bada a tenere ordinati i giorni della settimana!
+												</p>
+
 												<?php
 												weekday_selector ();
 												hour_selector ();
@@ -313,6 +334,12 @@ list ($y, $m, $d) = explode ('-', $current_week);
 												</div>
 											</div>
 											<div class="control-group">
+												<label class="control-label" for="verify">Permanente</label>
+												<div class="controls">
+													<a href="#" class="btn permanent">Tutto l'Anno</a>
+												</div>
+											</div>
+											<div class="control-group">
 												<label class="control-label" for="verify">Verifica</label>
 												<div class="controls">
 													<a href="#" class="btn btn-primary verifydays">Controlla Giorni</a>
@@ -321,32 +348,6 @@ list ($y, $m, $d) = explode ('-', $current_week);
 										</div>
 
 										<div class="final">
-										</div>
-									</div>
-
-									<div class="tab-pane" id="eventpermanent">
-										<div class="original">
-											<?php recurrence_selector (); ?>
-
-											<div class="replicableweekday">
-												<hr />
-
-												<?php
-												weekday_selector ();
-												hour_selector ();
-												rooms_selector ();
-												materials_selector ();
-												?>
-											</div>
-
-											<hr />
-
-											<div class="control-group">
-												<label class="control-label" for="verify">Verifica</label>
-												<div class="controls">
-													<a href="#" class="btn verifydaysyear">Controlla Giorni</a>
-												</div>
-											</div>
 										</div>
 									</div>
 								</div>
@@ -494,7 +495,10 @@ list ($y, $m, $d) = explode ('-', $current_week);
 						<div class="rooms_names_wrapper span3">
 							<ul class="rooms_names">
 								<?php foreach ($rooms as $r): ?>
-								<li id="sorting_<?php echo $r ['id'] ?>"><img src="img/sorter.png" class="handle" /> <span><?php echo $r ['name'] ?></span></li>
+								<li id="sorting_<?php echo $r ['id'] ?>">
+									<img src="img/sorter.png" class="handle" />
+									<span><?php echo $r ['name'] ?></span>
+								</li>
 								<?php endforeach; ?>
 							</ul>
 
@@ -527,7 +531,10 @@ list ($y, $m, $d) = explode ('-', $current_week);
 
 								<ul class="materials_names">
 									<?php while ($r = $result->fetch_array ()): ?>
-									<li class="ec_<?php echo $r ['id'] ?>"><input value="<?php echo $r ['name'] ?>" /> <img class="remove_button" src="img/remove.png" /></li>
+									<li class="ec_<?php echo $r ['id'] ?>">
+										<input type="text" value="<?php echo $r ['name'] ?>" class="span2" />
+										<img class="remove_button" src="img/remove.png" />
+									</li>
 									<?php endwhile; ?>
 								</ul>
 
@@ -558,7 +565,8 @@ list ($y, $m, $d) = explode ('-', $current_week);
 								<ul class="event_cat_names">
 									<?php while ($r = $result->fetch_array ()): ?>
 									<li class="ec_<?php echo $r ['id'] ?>">
-										<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
+										<input type="text" value="<?php echo $r ['name'] ?>" class="span2" />
+										<img class="remove_button" src="img/remove.png" />
 									</li>
 									<?php endwhile; ?>
 								</ul>
@@ -582,7 +590,8 @@ list ($y, $m, $d) = explode ('-', $current_week);
 								<ul class="contacts_cat_names">
 									<?php while ($r = $result->fetch_array ()): ?>
 									<li class="cc_<?php echo $r ['id'] ?>">
-										<input value="<?php echo $r ['name'] ?>" class="span2" /> <img class="remove_button" src="img/remove.png" />
+										<input type="text" value="<?php echo $r ['name'] ?>" class="span2" />
+										<img class="remove_button" src="img/remove.png" />
 									</li>
 									<?php endwhile; ?>
 								</ul>
@@ -673,11 +682,9 @@ list ($y, $m, $d) = explode ('-', $current_week);
 
 			<div style="display: none;" class="tabcontent" id="tab_content_6">
 				<div class="users_parameters">
-					<p>
+					<p class="alert alert-info">
 						Se lasci il campo "password" vuoto la password non verr&agrave; cambiata (tranne nel caso di un nuovo utente, dove &egrave; obbligatoria).
 					</p>
-
-					<hr />
 
 					<table class="usersgrid">
 						<thead>
