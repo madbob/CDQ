@@ -677,6 +677,28 @@ $(document).ready (function () {
 		}
 	});
 
+	$('.console .shortnavweek .currentweek').live ('click', function () {
+		var d = new Date ();
+		$('.console .navyear li a:contains(' + d.getFullYear () +  ')').parent ().click ();
+		$('.console .navmonth li a.' + (d.getMonth () + 1)).parent ().click ();
+
+		var preday = $('.console .navweek li a').first ();
+		var dayclicked = false;
+
+		$('.console .navweek li a').each (function () {
+			if ($(this).text () > d.getDate ()) {
+				preday.parent ().click ();
+				dayclicked = true;
+				return false;
+			}
+
+			preday = $(this);
+		});
+
+		if (dayclicked == false)
+			preday = $('.console .navweek li').last ().click ();
+	});
+
 	refreshContents ();
 });
 
@@ -913,7 +935,7 @@ function show_existing_event_edit (node) {
 		$('.editevent input[name=eventid]').val (data.id);
 		$('.details_for_event input[name=eventtype]').val (data.type);
 		$('.details_for_event input[name=title]').val (data.title);
-		$('.details_for_event select[name=category] option[value=' + data.category + ']').attr ('selected', 'selected');
+		$('.details_for_event select[name=cat] option[value=' + data.category + ']').attr ('selected', 'selected');
 
 		switchCheckbox ('.details_for_event input[name=private]', data.private_event);
 		switchCheckbox ('.details_for_event input[name=unconfirmed]', data.unconfirmed);
@@ -1014,7 +1036,7 @@ function setNav (node, alter_weeks) {
 
 		rows = 0;
 
-		for (; week_start <= max; week_start += 7) {
+		for (; week_start + 7 <= max; week_start += 7) {
 			$('.navweek').append ('<li><a href="#" class="' + week_start + '">' + week_start + '</a></li>');
 			rows++;
 		}

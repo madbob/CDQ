@@ -9,13 +9,9 @@
 
 - inoltre, sempre per gli eventi ciclici, mi sembra non vengano salvate le modifiche fatte solo per alcuni giorni della serie
 
-- che succede in caso di uso contemporaneo da parte di più utenti? si rischia di perdere le modifiche? va usato un per volta?
-
 - credo ci sia un problema nel caricamento di eventi particolarmente "pesanti"; per es. un evento che ha luogo per 5 giorni la settimana per 30 settimane non viene salvato
 
 - per gli eventi ciclici che stanno in più giorni e in sale diverse ci sono problemi nel salvataggio dei dati (sembra riporti il salvataggio sempre al primo giorno)
-
-- se si aggiunge una categoria a tutti gli eventi (ad es. abbiamo aggiunto la categoria "sportello"), tutti gli eventi già caricati cambiano automaticamente la propria
 
 - se possibile, nella gestione prezzi delle sale sarebbe bello poter differenziare a tendina la tipologia di prezzo. noi abbiamo infatti un listino diversificato per 3 tipologie: evento estemporaneo; evento ciclico gratis per il pubblico; evento ciclico a pagamento per il pubblico.
 
@@ -164,6 +160,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 		</ul>
 		<ul class="nav nav-pills pull-right shortnavweek">
 			<li><a href="#" class="prevweek">Precedente</a></li>
+			<li><a href="#" class="currentweek">Questa Settimana</a></li>
 			<li><a href="#" class="nextweek">Successiva</a></li>
 		</ul>
 		<ul class="nav nav-pills navweek">
@@ -175,7 +172,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			while (date ('N', strtotime ("$y-$m-$a")) != 1)
 				$a++;
 
-			for ($week_start = $a; $week_start <= $max; $week_start += 7)
+			for ($week_start = $a; $week_start + 7 <= $max; $week_start += 7)
 				echo '<li' . ($week_start >= $d && $week_start < ($d + 7) ? ' class="active"' : '') . '><a href="#" class="<?php echo $week_start ?>">' . $week_start . '</a></li>';
 
 			?>
