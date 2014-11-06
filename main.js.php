@@ -40,8 +40,8 @@ $(document).ready (function () {
 		}
 		else {
 			if ((event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
-				event.preventDefault (); 
-			} 
+				event.preventDefault ();
+			}
 		}
 	});
 
@@ -145,7 +145,9 @@ $(document).ready (function () {
 	});
 
 	$('.removeday').live ('click', function () {
-		$(this).parent ().parent ().parent ().remove ();
+		$(this).parent ().parent ().parent ().fadeOut (300, function () {
+			$(this).remove ();
+		});
 		recomputeCost ();
 		return false;
 	});
@@ -477,7 +479,8 @@ $(document).ready (function () {
 			$(".rooms_descriptions #properties_" + id).css ("display", "block");
 		});
 
-		$(".rooms_names").append ('<li id="sorting_' + id + '"><img src="img/sorter.png" class="handle" /> <span>Anonimo</span></li>');
+		$(".rooms_names li").removeClass ('selected');
+		$(".rooms_names").append ('<li id="sorting_' + id + '" class="selected"><img src="img/sorter.png" class="handle" /> <span>Anonimo</span></li>');
 		$(".rooms_descriptions li").css ("display", "none");
 
 		return false;
@@ -673,6 +676,8 @@ $(document).ready (function () {
 			onNavClick ($('.console .navweek .active').next (), false);
 		}
 	});
+
+	refreshContents ();
 });
 
 function ciclycStockInfo () {
@@ -814,8 +819,8 @@ function closeDialog (target) {
 	target.hide ();
 
 	var overlay = $('#modal-overlay');
-	overlay.fadeOut (function () { 
-		$(this).remove (); 
+	overlay.fadeOut (function () {
+		$(this).remove ();
 	});
 }
 
@@ -1159,6 +1164,27 @@ function getCurrentDate () {
 	return s;
 }
 
+function refreshContents () {
+	setTimeout (function () {
+		loadCurrentPageBG ();
+		refreshContents ();
+	}, 5000);
+}
+
+/*
+	Uguale a loadCurrentPage(), ma non attiva l'animazione di caricamento
+*/
+function loadCurrentPageBG () {
+	s = getCurrentDate ();
+
+	$.getJSON ('async_ui.php?type=page&start=' + s, function (data) {
+		currentData = data;
+		loadCurrentData ();
+	});
+
+	return false;
+}
+
 function loadCurrentPage () {
 	s = getCurrentDate ();
 	loading (true);
@@ -1196,7 +1222,7 @@ function syncContents () {
 			if (found == true)
 				$('.contacts_list ul').append ('<li class="contact_' + d.id + '">' + d.name + '</li>');
 		}
-	});	
+	});
 }
 
 function fillContactForm (parentclass, data) {

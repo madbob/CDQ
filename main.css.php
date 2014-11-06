@@ -370,6 +370,10 @@ div.tabs div.tab.selected div.arrow {
 	cursor: hand;
 }
 
+li.selected {
+	color: #F00;
+}
+
 .configuration_users table {
 	text-align: center;
 }

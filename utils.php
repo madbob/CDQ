@@ -529,8 +529,9 @@ function compute_cyclic_days ($repeats) {
 	}
 
 	$check_wd = date ('N', strtotime ($start));
+
 	if ($check_wd != $weekdays [0]['day'])
-		$date = date ('Y-m-d', strtotime ($start . ' + ' . (7 - $weekdays [0]['day']) . ' days'));
+		$date = date ('Y-m-d', strtotime ($start . ' + ' . (7 - abs ($check_wd - $weekdays [0]['day'])) . ' days'));
 	else
 		$date = $start;
 
@@ -948,7 +949,7 @@ function saved_page ($message) {
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta HTTP-EQUIV="REFRESH" content="5; url=index.php">
+	<meta HTTP-EQUIV="REFRESH" content="3; url=index.php">
 
 	<title>Calendario del Quartiere</title>
 
@@ -961,7 +962,7 @@ function saved_page ($message) {
 			<?php echo $message ?>
 		</p>
 		<p>
-			Tra 5 secondi sarai reindirizzato automaticamente alla pagina principale, oppure <a href="index.php">clicca qui</a>.
+			Tra 3 secondi sarai reindirizzato automaticamente alla pagina principale, oppure <a href="index.php">clicca qui</a>.
 		</p>
 	</div>
 </body>

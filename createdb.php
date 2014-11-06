@@ -3,6 +3,10 @@
 require_once ('db.php');
 global $db;
 
+/*****************************************************************************************
+	INIT
+*/
+
 $query = "CREATE TABLE config (
 		id int auto_increment primary key,
 		name varchar(100) default '',
@@ -135,5 +139,13 @@ $query = "CREATE TABLE current_sessions (
 	)";
 $db->query ($query) or die ("Impossibile creare tabella 'current_sessions': " . $db->error);
 
-?>
+/*****************************************************************************************
+	POPULATE
+*/
 
+$query = "INSERT INTO users (
+		(username, password, permissions) VALUES ('admin', MD5('cippalippa'), 1)
+	)";
+$db->query ($query) or die ("Impossibile creare utente admin: " . $db->error);
+
+?>

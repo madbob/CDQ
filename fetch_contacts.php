@@ -30,8 +30,8 @@ else if (array_key_exists ('action', $_GET) == true) {
 	switch ($_GET ['action']) {
 		case 'list':
 			$ids = explode ('::', $_GET ['having']);
-			if (count ($ids) == 0)
-				$ids [] = -1;
+			if ($_GET ['having'] == '' || count ($ids) == 0)
+				$ids = array (-1);
 
 			$ret = array ();
 			$query = "SELECT * FROM contacts WHERE id NOT IN (" . join (', ', $ids) . ")";

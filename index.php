@@ -63,7 +63,7 @@ $rooms = retrieve_rooms ();
 			<tr>
 				<td class="datecol iblock">
 					<?php if ($current_permissions == 1): ?>
-					<div class="conf_button"><img src="img/conf.png" alt="Configurazioni" /></div> | 
+					<div class="conf_button"><img src="img/conf.png" alt="Configurazioni" /></div> |
 					<?php endif; ?>
 					<div class="print_button"><img src="img/printer.png" alt="Stampa" /></div> | <div class="logout_button"><img src="img/logout.png" alt="Logout" /></div>
 				</td>
@@ -492,25 +492,29 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			<div style="display: none;" class="tabcontent" id="tab_content_2">
 				<form action="save_rooms.php" method="POST" class="configuration_rooms form-horizontal">
 					<div class="row">
-						<div class="rooms_names_wrapper span3">
-							<ul class="rooms_names">
-								<?php foreach ($rooms as $r): ?>
-								<li id="sorting_<?php echo $r ['id'] ?>">
-									<img src="img/sorter.png" class="handle" />
-									<span><?php echo $r ['name'] ?></span>
-								</li>
-								<?php endforeach; ?>
-							</ul>
+						<div class="rooms_names_wrapper span7 offset1">
+							<fieldset>
+								<ul class="rooms_names">
+									<?php foreach ($rooms as $r): ?>
+									<li id="sorting_<?php echo $r ['id'] ?>">
+										<img src="img/sorter.png" class="handle" />
+										<span><?php echo $r ['name'] ?></span>
+									</li>
+									<?php endforeach; ?>
+								</ul>
 
-							<p class="add_room"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<p class="add_room"><img src="img/add.png" /> Aggiungi Nuovo</p>
+
+								<hr />
+
+								<ul class="rooms_descriptions span5">
+									<?php
+									foreach ($rooms as $r)
+										room_properties_form ($r ['id'], $r ['name'], $r ['defaultprice'], $r ['visible']);
+									?>
+								</ul>
+							</fieldset>
 						</div>
-
-						<ul class="rooms_descriptions span5">
-							<?php
-							foreach ($rooms as $r)
-								room_properties_form ($r ['id'], $r ['name'], $r ['defaultprice'], $r ['visible']);
-							?>
-						</ul>
 					</div>
 
 					<input type="submit" value="Salva" class="save_button btn btn-primary pull-right" />
