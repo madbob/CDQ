@@ -150,11 +150,11 @@ require_once ('utils.php');
 
 .allocated {
 	position: absolute;
-	border: 1px solid #000000;
+	/* border: 1px solid #000000; */
 	cursor: pointer;
 	cursor: hand;
-	font-size: <?php echo getconf ('fontsize') ?>px;
-	height: <?php echo getconf ('fontsize') + 4 ?>px;
+	font-size: <?php echo getconf ('fontsize') - 2 ?>px;
+	height: <?php echo getconf ('fontsize') ?>px;
 	overflow: hidden;
 	z-index: 50;
 	padding: 2px;

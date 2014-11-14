@@ -40,11 +40,14 @@ $rooms = retrieve_rooms ();
 	<script type="text/javascript" src="main.js.php"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 
+	<link rel="stylesheet" media="screen" href="css/reset.css" />
 	<link rel="stylesheet" media="screen" href="css/bootstrap.css" />
 	<link rel="stylesheet" media="screen" href="css/jquery-ui.css" />
 	<link rel="stylesheet" media="screen" href="css/jquery.ui.timepicker.css" />
 	<link rel="stylesheet" media="screen" href="main.css.php" />
-	<link rel="stylesheet" media="print" href="print.css.php" />
+
+	<link rel="stylesheet" alt="printing" media="print" href="css/reset.css" />
+	<link rel="stylesheet" alt="printing" media="print" href="print.css.php" />
 </head>
 
 <body>

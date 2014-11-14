@@ -10,6 +10,7 @@ global $maxhour;
 ?>
 
 var currentData = null;
+var refreshHandler = null;
 
 $(document).ready (function () {
 	$('.date').datepicker ({
@@ -58,9 +59,24 @@ $(document).ready (function () {
 	});
 
 	$('.print_button').click (function () {
-		s = getCurrentDate ();
-		$('body').append ('<iframe src="printer.php?starting=' + s + '"></iframe>');
+		/*
+			Qui forzo l'applicazione dei CSS per la stampa e ricarico i contenuti, questi verranno
+			posizionati in funzione del nuovo layout della pagina e sara' possibile stampare la
+			pagina con i blocchi .allocated disposti correttamente
+		*/
+		$('link[alt=printing]').attr ('media', 'screen');
+		loadCurrentPageBG ();
+		setTimeout (function () {
+			$('link[media=screen]').attr ('media', 'print');
+			window.print ();
+		}, 500);
 	});
+
+	window.onafterprint = function () {
+		$('link[alt!=printing]').attr ('media', 'screen');
+		$('link[alt=printing]').attr ('media', 'print');
+		loadCurrentPageBG ();
+	};
 
 	/***********************************************************************
 		Tabella principale
@@ -698,8 +714,6 @@ $(document).ready (function () {
 		if (dayclicked == false)
 			preday = $('.console .navweek li').last ().click ();
 	});
-
-	refreshContents ();
 });
 
 function ciclycStockInfo () {
@@ -1088,61 +1102,46 @@ function loadCurrentData () {
 
 	setupHover ();
 
-	for (a = 0; a < data.events.length; a++) {
+	for (var a = 0; a < data.events.length; a++) {
 		ev = data.events [a];
 
-		stokens = ev.shour.split (':');
-		shour = parseInt (stokens [0]);
+		var stokens = ev.shour.split (':');
+		var shour = parseInt (stokens [0]);
 		if (stokens [1] != '00')
 			shour += 0.5;
 
-		etokens = ev.ehour.split (':');
+		var etokens = ev.ehour.split (':');
 
-		ehour = parseInt (etokens [0]);
+		var ehour = parseInt (etokens [0]);
 		if (etokens [1] != '00')
 			ehour += 0.5;
 
+		var left = $('.mainhead td.head_' + stokens[0]);
+		var leftpx = left.offset ().left;
+
+		if (stokens [1] != '00')
+			leftpx = leftpx + (left.width () / 2);
+
+		leftpx = leftpx + 'px';
+
 		/*
-			Qui (e sotto) sfrutto il fatto che wkhtmltopdf,
-			usato per produrre i PDF delle pagine, non
-			implementa la funzione window.matchMedia().
-			Percui posso calcolare le dimensioni o
-			dinamicamente prendendo i riferimenti sullo
-			schermo, o basandomi su dimensioni fisse e note
-			definite nel CSS per i fogli A4
+			Dimensione di una cella * numero di celle
+
+			dimensione cella di riferimento * numero di spazi allocati +
+			padding * (numero di spazi allocati - 1)
+
+			Il padding è calcolato come 2px a destra, 2px a sinistra, e 1px per il bordo tra le celle
 		*/
-		if (window.matchMedia) {
-			left = $('.mainhead td.head_' + stokens[0]);
-			leftpx = left.offset ().left;
+		var width = (left.width () * (ehour - shour)) + (5 * (ehour - shour - 1));
+		width = width + 'px';
 
-			if (stokens [1] != '00')
-				leftpx = leftpx + (left.width () / 2);
-
-			leftpx = leftpx + 'px';
-
-			width = left.width () * (ehour - shour);
-			width = width + 'px';
-		}
-		else {
-			/*
-				larghezza del foglio A4 standard   /
-				numero di colonne                  =
-				larghezza fissa di ogni colonna
-			*/
-			standard = 210 / (<?php echo ($maxhour - $minhour) + 2 ?>);
-			width = standard;
-			width = width + 'mm';
-			leftpx = standard * ((shour - <?php echo $minhour ?>) + 1);
-			leftpx = leftpx + 'mm';
-		}
-
-		typeclass = 'allocated_type_' + ev.type;
+		var typeclass = 'allocated_type_' + ev.type;
 		if (ev.paystatus == 1)
 			typeclass = typeclass + ' unpayed';
 		if (ev.unconfirmed == 1)
 			typeclass = typeclass + ' unconfirmed';
 
-		for (i = 0; i < ev.rooms.length; i++) {
+		for (var i = 0; i < ev.rooms.length; i++) {
 			/*
 				TODO	Questo e' per controllare se la
 					stanza di riferimento e'
@@ -1154,21 +1153,10 @@ function loadCurrentData () {
 			if ($('td.datecol input[name=roomid][value=' + ev.rooms [i] + ']').length == 0)
 				continue;
 
-			row = $('.daysep:has(input[value="' + ev.day + '"])').nextAll ('tr:has(td.datecol input[name=roomid][value=' + ev.rooms [i] + ']):first');
+			var row = $('.daysep:has(input[value="' + ev.day + '"])').nextAll ('tr:has(td.datecol input[name=roomid][value=' + ev.rooms [i] + ']):first');
+			var t = row.offset ().top;
 
-			if (window.matchMedia) {
-				t = row.offset ().top;
-			}
-			else {
-				/*
-					20 e' il margine alto della tabella principale
-					3 dovrebbe rappresentare la somma dei margini per ogni cella
-					1.2 e' totalmente arbitrario ed empirico
-				*/
-				t = ((row.index ()) * <?php echo getconf ('fontsize') * 1.2 ?>) + ((row.index ()) * 3) + 20;
-			}
-
-			box = $('<div class="allocated ' + typeclass + '">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
+			var box = $('<div class="allocated ' + typeclass + '">' + ev.name + '<input type="hidden" name="eventid" value="' + ev.id + '" /></div>');
 			$('#eventspark').append (box);
 
 			box.css ('left', leftpx);
@@ -1179,25 +1167,18 @@ function loadCurrentData () {
 }
 
 function getCurrentDate () {
-	y = $('.navyear .active').text ();
-	m = $('.navmonth .active a').attr ('class');
-	d = $('.navweek .active').text ();
-	s = y + "-" + m + "-" + d;
+	var y = $('.navyear .active').text ();
+	var m = $('.navmonth .active a').attr ('class');
+	var d = $('.navweek .active').text ();
+	var s = y + "-" + m + "-" + d;
 	return s;
-}
-
-function refreshContents () {
-	setTimeout (function () {
-		loadCurrentPageBG ();
-		refreshContents ();
-	}, 5000);
 }
 
 /*
 	Uguale a loadCurrentPage(), ma non attiva l'animazione di caricamento
 */
 function loadCurrentPageBG () {
-	s = getCurrentDate ();
+	var s = getCurrentDate ();
 
 	$.getJSON ('async_ui.php?type=page&start=' + s, function (data) {
 		currentData = data;
