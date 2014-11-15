@@ -84,8 +84,10 @@ function retrieve_rooms ($all = true) {
 	$cols = array ();
 	$query = "SELECT * FROM rooms " . ($all == false ? "WHERE visible = true" : "") . " ORDER BY position ASC";
 	$result = $db->query ($query);
-	while ($col = $result->fetch_array ())
+	while ($col = $result->fetch_array ()) {
+		$col ['defaultprice'] = get_room_price ($col ['id']);
 		$cols [] = $col;
+	}
 
 	return $cols;
 }
@@ -99,10 +101,14 @@ function get_room_price ($id) {
 	if (array_key_exists ($id, $roomPrices) == false) {
 		global $db;
 
-		$query = "SELECT defaultprice FROM rooms WHERE id = $id";
-		$result = $db->query ($query);
-		$col = $result->fetch_array ();
-		$roomPrices [$id] = $col [0];
+		$prices = array ();
+
+		$query = "SELECT * FROM roomprices WHERE roomid = $id ORDER BY amount ASC";
+		$subresult = $db->query ($query);
+		while ($price = $subresult->fetch_array ())
+			$prices [$price ['label']] = $price ['amount'];
+
+		$roomPrices [$id] = $prices;
 	}
 
 	return $roomPrices [$id];
@@ -700,9 +706,22 @@ function room_properties_form ($id, $name, $price, $visible, $new = true) {
 			</div>
 
 			<div class="control-group">
-				<label class="control-label" for="price_<?php echo $id ?>">Prezzo Orario</label>
+				<label class="control-label" for="price_<?php echo $id ?>">Prezzi</label>
 				<div class="controls">
-					<input type="text" name="price_<?php echo $id ?>" value="<?php echo $price ?>" /> €
+					<?php
+					if (count ($price) == 0)
+						$price ['Default'] = 0.00;
+					?>
+
+					<?php foreach ($price as $label => $amount): ?>
+					<div class="input-append">
+						<input type="text" class="span2" name="pricelabel_<?php echo $id ?>[]" value="<?php echo $label ?>" />
+						<input type="text" class="span1" name="price_<?php echo $id ?>[]" value="<?php echo $amount ?>" />
+						<img class="remove_roomprice" src="img/remove.png" />
+					</div>
+					<?php endforeach ?>
+
+					<p class="add_roomprice"><img src="img/add.png" /> Aggiungi Nuovo</p>
 				</div>
 			</div>
 

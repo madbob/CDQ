@@ -8,7 +8,7 @@ if (array_key_exists ('type', $_GET) == false)
 
 switch ($_GET ['type']) {
 	case 'room_form':
-		room_properties_form ($_GET ['id'], 'Senza Nome', 0, true);
+		room_properties_form ($_GET ['id'], 'Senza Nome', array (), true);
 		break;
 
 	case 'page':
@@ -185,6 +185,36 @@ switch ($_GET ['type']) {
 		<div class="paystatus1<?php if ($status == 0) echo " hidden" ?>">
 			<hr />
 
+			<?php
+
+			$rooms = array ();
+
+			foreach ($days as $d) {
+				foreach ($d ['rooms'] as $r) {
+					if (array_key_exists ($r, $rooms))
+						continue;
+
+					$p = get_room_price ($r);
+					$pkeys = array_keys ($p);
+					$rooms [$r] = $p [$pkeys [0]];
+
+					?>
+
+					<div class="control-group">
+						<label class="control-label" for="payprice">Prezzo</label>
+						<div class="controls">
+							<select name="payprice" class="payprice room_<?php echo $r ?> span3<?php if ($status == 0) echo " hidden" ?>">
+								<?php foreach ($pkeys as $label):
+									$amount = $p [$label];
+									?>
+									<option value="<?php echo $amount ?>"><?php echo "$label ($amount €/ora)" ?></option>
+								<?php endforeach ?>
+							</select>
+						</div>
+					</div>
+				<?php }
+			} ?>
+
 			<form action="" class="form-horizontal">
 				<?php
 
@@ -200,7 +230,7 @@ switch ($_GET ['type']) {
 					$hours = $end - $start;
 
 					foreach ($d ['rooms'] as $r) {
-						$p = get_room_price ($r);
+						$p = $rooms [$r];
 						$sum = $p * $hours;
 
 						?>
@@ -208,7 +238,7 @@ switch ($_GET ['type']) {
 						<div class="control-group">
 							<div class="controls">
 								<div class="input-append">
-									<input disabled="disabled" type="text" class="span1" value="<?php echo $sum ?>" />
+									<input disabled="disabled" type="text" class="pricesingleroomday span1 room_<?php echo $r ?>" value="<?php echo $sum ?>" />
 									<span class="add-on">€</span>
 								</div> +
 							</div>

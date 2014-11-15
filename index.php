@@ -5,15 +5,11 @@
 
 /*
 
-- la stampa non sembra funzionare
-
 - inoltre, sempre per gli eventi ciclici, mi sembra non vengano salvate le modifiche fatte solo per alcuni giorni della serie
 
 - credo ci sia un problema nel caricamento di eventi particolarmente "pesanti"; per es. un evento che ha luogo per 5 giorni la settimana per 30 settimane non viene salvato
 
 - per gli eventi ciclici che stanno in più giorni e in sale diverse ci sono problemi nel salvataggio dei dati (sembra riporti il salvataggio sempre al primo giorno)
-
-- se possibile, nella gestione prezzi delle sale sarebbe bello poter differenziare a tendina la tipologia di prezzo. noi abbiamo infatti un listino diversificato per 3 tipologie: evento estemporaneo; evento ciclico gratis per il pubblico; evento ciclico a pagamento per il pubblico.
 
 */
 

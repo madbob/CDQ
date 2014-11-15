@@ -154,7 +154,7 @@ require_once ('utils.php');
 	cursor: pointer;
 	cursor: hand;
 	font-size: <?php echo getconf ('fontsize') - 2 ?>px;
-	height: <?php echo getconf ('fontsize') ?>px;
+	height: <?php echo getconf ('fontsize') + 5 ?>px;
 	overflow: hidden;
 	z-index: 50;
 	padding: 2px;

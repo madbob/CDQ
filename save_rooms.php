@@ -33,7 +33,8 @@ else {
 			list ($useless, $id) = explode ('_', $key);
 
 			$name = $_POST [$key];
-			$price = $_POST ['price_' . $id];
+			$prices = $_POST ['price_' . $id];
+			$pricelabels = $_POST ['pricelabel_' . $id];
 			$visible = (array_key_exists ('visible_' . $id, $_POST) == true ? 'true' : 'false');
 
 			$query = "SELECT id FROM rooms WHERE id = $id";
@@ -43,13 +44,14 @@ else {
 				$query = "SELECT MAX(position) + 1 AS position FROM rooms";
 				$position = 0; // db_get_value ($query);
 
-				$query = "INSERT INTO rooms (name, defaultprice, visible, position) VALUES ('$name', '$price', $visible, $position)";
+				$query = "INSERT INTO rooms (name, visible, position) VALUES ('$name', $visible, $position)";
 				if ($db->query ($query) == false) {
 					$success = false;
 					break;
 				}
 
-				$ids [] = $db->insert_id;
+				$id = $db->insert_id;
+				$ids [] = $id;
 			}
 			else {
 				$query = "UPDATE rooms SET name = '$name', defaultprice = '$price', visible = $visible WHERE id = $id";
@@ -59,6 +61,16 @@ else {
 				}
 
 				$ids [] = $id;
+
+				$query = "DELETE FROM roomprices WHERE roomid = $id";
+				$db->query ($query);
+			}
+
+			for ($i = 0; $i < count ($prices); $i++) {
+				$price = $prices [$i];
+				$label = $pricelabels [$i];
+				$query = "INSERT INTO roomprices (roomid, label, amount) VALUES ($id, '$label', $price)";
+				$db->query ($query);
 			}
 		}
 	}

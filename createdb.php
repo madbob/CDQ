@@ -40,6 +40,15 @@ $query = "CREATE TABLE rooms (
 $db->query ($query) or die ("Impossibile creare tabella 'rooms': " . $db->error);
 
 
+$query = "CREATE TABLE roomprices (
+		id int auto_increment primary key,
+		roomid int references rooms (id),
+		label varchar(100) default '',
+		amount decimal(6,2) default 0
+	)";
+$db->query ($query) or die ("Impossibile creare tabella 'roomprices': " . $db->error);
+
+
 $query = "CREATE TABLE materials (
 		id int auto_increment primary key,
 		name varchar(100) default ''

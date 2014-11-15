@@ -391,16 +391,29 @@ $(document).ready (function () {
 			$(this).siblings ('.paystatus1').show ();
 	});
 
-	$('.modifyall').live ('click', function () {
-		node = $('.propagate_modify');
+	$('.payprice').live ('change', function () {
+		var price = $(this).find ('option:selected').val ();
+		var cla = $(this).attr ('class').replace (/^.*(room_[0-9]*).*$/, "$1");
+		$('.paystatus1').find ('.' + cla).val (price);
 
-		rooms = new Array ();
+		var total = 0;
+		$('.paystatus1 .pricesingleroomday').each (function () {
+			total += parseFloat ($(this).val ());
+		});
+
+		$('.paystatus1 .pricetotal').val (total);
+	});
+
+	$('.modifyall').live ('click', function () {
+		var node = $('.propagate_modify');
+
+		var rooms = new Array ();
 		node.find ('.roomsel select[name=room] option:selected').each (function () {
 			rooms.push ($(this).val ());
 		});
 
-		shour = node.find ('input[name=shour]').val ();
-		ehour = node.find ('input[name=ehour]').val ();
+		var shour = node.find ('input[name=shour]').val ();
+		var ehour = node.find ('input[name=ehour]').val ();
 
 		node.siblings ('div').each (function () {
 			$(this).find ('input[name=shour]').val (shour);
@@ -544,6 +557,18 @@ $(document).ready (function () {
 		update: function () {
 			$.post ('save_rooms.php?action=sorting', $('.configuration_rooms .rooms_names').sortable('serialize'));
 		}
+	});
+
+	$('.add_roomprice').live ('click', function () {
+		var box = $(this).siblings ('.input-append:first').clone ();
+		box.find ('input').val ('');
+		$(this).before (box);
+	});
+
+	$('.remove_roomprice').live ('click', function () {
+		var p = $(this).parent ();
+		if ($(p).siblings ('.input-append').length > 0)
+			$(p).remove ();
 	});
 
 	$('.add_button').click (function () {
