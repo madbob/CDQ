@@ -394,6 +394,10 @@ li.selected {
 	background-color: #EEEEEE;
 }
 
+.contacts_list ul li.selected {
+	background-color: #EEEEEE;
+}
+
 .rooms_names_wrapper .add_column {
 	margin-top: 15px;
 	cursor: hand;

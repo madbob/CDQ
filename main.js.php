@@ -149,7 +149,9 @@ $(document).ready (function () {
 	});
 
 	$('.removeroom').live ('click', function () {
-		$(this).parent ().remove ();
+		$(this).parent ().hide ('slow', function () {
+			$(this).remove ();
+		});
 		recomputeCost ();
 		return false;
 	});
@@ -161,7 +163,7 @@ $(document).ready (function () {
 	});
 
 	$('.removeday').live ('click', function () {
-		$(this).parent ().parent ().parent ().fadeOut (300, function () {
+		$(this).parent ().parent ().parent ().hide ('slow', function () {
 			$(this).remove ();
 		});
 		recomputeCost ();
@@ -429,7 +431,7 @@ $(document).ready (function () {
 	*/
 
 	$('.filter_ul').keyup (function () {
-		var t = $(this).val ();
+		var t = $(this).val ().toLowerCase ();
 
 		if (t == '') {
 			$(this).siblings ('ul').find ('li').each (function () {
@@ -438,7 +440,7 @@ $(document).ready (function () {
 		}
 		else {
 			$(this).siblings ('ul').find ('li').each (function () {
-				if ($(this).text ().indexOf (t) == -1)
+				if ($(this).text ().toLowerCase().indexOf (t) == -1)
 					$(this).hide ();
 				else
 					$(this).show ();
@@ -447,6 +449,8 @@ $(document).ready (function () {
 	});
 
 	$('.contacts_list li').live ('click', function () {
+		$('.contacts_list ul li.selected').removeClass ('selected');
+		$(this).addClass ('selected');
 		toks = $(this).attr ('class').split ('_');
 		stat_s = $('.contact_editable .stats .statsstartdate').val ();
 		stat_e = $('.contact_editable .stats .statsenddate').val ();
@@ -455,6 +459,10 @@ $(document).ready (function () {
 			fillContactForm ('contact_editable', data);
 			fillContactStats ('contact_editable', data);
 		});
+	});
+
+	$(".contact_editable input[name=contactname]").live ('keyup', function (event) {
+		$('.contacts_list ul li.selected').html ($(this).val ());
 	});
 
 	$('.contact_editable .stats .date').change (function () {
@@ -472,7 +480,9 @@ $(document).ready (function () {
 			id = $('.contact_editable input[name=contactid]').val ();
 
 			$.post ('fetch_contacts.php?action=remove&id=' + id, function () {
-				$('.contacts_list li.contact_' + id).remove ();
+				$('.contacts_list li.contact_' + id).hide ('slow', function () {
+					$(this).remove ();
+				});
 				reset_event_contact ('contact_editable');
 			});
 		}
@@ -537,13 +547,17 @@ $(document).ready (function () {
 		var id = block.attr ("id").split ("properties_") [1];
 
 		if (block.find ('input[name=old_element]').length == 0) {
-			$(".rooms_names #sorting_" + id).remove ();
+			$(".rooms_names #sorting_" + id).hide ('slow', function () {
+				$(this).remove ();
+			});
 			block.remove ();
 		}
 		else {
 			if (confirm ("Sei sicuro?\nTutti i dati relativi a questa sala verranno eliminati!") == true) {
 				$.post ('save_rooms.php?action=remove', {id: id}, function () {
-					$(".rooms_names #sorting_" + id).remove ();
+					$(".rooms_names #sorting_" + id).hide ('slow', function () {
+						$(this).remove ();
+					});
 					block.remove ();
 				});
 			}
@@ -567,16 +581,24 @@ $(document).ready (function () {
 
 	$('.remove_roomprice').live ('click', function () {
 		var p = $(this).parent ();
-		if ($(p).siblings ('.input-append').length > 0)
-			$(p).remove ();
+		if ($(p).siblings ('.input-append').length > 0) {
+			$(p).hide ('slow', function () {
+				$(this).remove ();
+			});
+		}
 	});
 
 	$('.add_button').click (function () {
-		$(this).siblings ('ul').append ('<li class="new"><input type="text" value="" class="span2" /> <img class="remove_button" src="img/remove.png" /></li>');
+		var item = $('<li class="new"><input type="text" value="" class="span2" /> <img class="remove_button" src="img/remove.png" /></li>');
+		item.hide ();
+		$(this).siblings ('ul').append (item);
+		item.fadeIn (300);
 	});
 
 	$('.remove_button').live ('click', function () {
-		$(this).parent ().remove ();
+		$(this).parent ().hide ('slow', function () {
+			$(this).remove ();
+		});
 	});
 
 	$('.configuration_categories').submit (function () {
@@ -612,7 +634,9 @@ $(document).ready (function () {
 	});
 
 	$('.users_parameters .remove_user').live ('click', function () {
-		$(this).parent ().parent ().remove ();
+		$(this).parent ().parent ().hide ('slow', function () {
+			$(this).remove ();
+		});
 	});
 
 	$('.users_parameters .add_user').click (function () {
@@ -871,22 +895,22 @@ function showDialog (target) {
 		closeDialog (target);
 	}));
 	overlay.css ("opacity", 0.8);
-	overlay.fadeIn (150);
+	overlay.fadeIn (600);
 
-	target.show ();
+	target.show ('drop', 600);
 }
 
 function closeDialog (target) {
-	target.hide ();
+	target.hide ('drop', 600);
 
 	var overlay = $('#modal-overlay');
-	overlay.fadeOut (function () {
+	overlay.fadeOut (600, function () {
 		$(this).remove ();
 	});
 }
 
 function reset_event_contact (parentclass) {
-	$('.' + parentclass + ' input').val ('');
+	$('.' + parentclass + ' input[class*=remove_contact]').val ('');
 	$('.' + parentclass + ' input[type=checkbox]').removeAttr ('checked');
 	$('.' + parentclass + ' input[name=contactid]').val ('new');
 }

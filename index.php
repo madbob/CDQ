@@ -4,13 +4,10 @@
 <?php
 
 /*
-
-- inoltre, sempre per gli eventi ciclici, mi sembra non vengano salvate le modifiche fatte solo per alcuni giorni della serie
-
-- credo ci sia un problema nel caricamento di eventi particolarmente "pesanti"; per es. un evento che ha luogo per 5 giorni la settimana per 30 settimane non viene salvato
-
-- per gli eventi ciclici che stanno in più giorni e in sale diverse ci sono problemi nel salvataggio dei dati (sembra riporti il salvataggio sempre al primo giorno)
-
+	- esportazione widget embeddabile in configurazioni
+	- ricaricare impostazioni sale/materiali/categorie se il dialog viene chiuso senza salvare
+	- feedback attesa quando richiesta modifica evento completo (puo' richiedere del tempo per pescare tutti i dati)
+	- manca un tasto per creare un nuovo contatto fuori da un evento
 */
 
 require_once ('login.php');
