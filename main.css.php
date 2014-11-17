@@ -11,6 +11,10 @@ require_once ('utils.php');
 	margin: 0px;
 }
 
+ul {
+	margin-left: 0px;
+}
+
 .login_form {
 	margin: auto;
 	width: 300px;
@@ -58,13 +62,14 @@ require_once ('utils.php');
 
 .daysep td {
 	text-align: center;
-	background-color: #FF9900;
+	background-color: #DDD;
 }
 
 .datecol {
 	text-align: left;
 	width: 5.88%;
-	background-color: #CCCCFF;
+	background-color: #AAA;
+	color: #FFF;
 }
 
 .datecol div {
@@ -75,8 +80,9 @@ require_once ('utils.php');
 	font-size: <?php echo getconf ('fontsize') ?>px;
 	border-spacing: 0px;
 	width: 100%;
-	border-bottom: 1px solid #CCCCFF;
-	background-color: #CCCCFF;
+	border-bottom: 1px solid #AAA;
+	background-color: #AAA;
+	color: #FFF;
 }
 
 .mainhead .datecol div {
@@ -128,13 +134,22 @@ require_once ('utils.php');
 	overflow: hidden;
 }
 
+/*
+
 .maintable tr:hover {
-	background-color: #EEEEEE;
+	background-color: #C6CADA;
 }
 
 .maintable tr:hover td {
-	border: 1px solid #EEEEEE;
+	border: 1px solid #C6CADA;
 }
+
+*/
+
+/*
+	Attenzione: il colore delle celle di orario e sala relative
+	all'hover e' gestito in Javascript, funzione setupHover()
+*/
 
 .maintable tr td:hover {
 	border: 1px solid #BBBBBB;

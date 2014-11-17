@@ -721,7 +721,7 @@ function room_properties_form ($id, $name, $price, $visible, $new = true) {
 					</div>
 					<?php endforeach ?>
 
-					<p class="add_roomprice"><img src="img/add.png" /> Aggiungi Nuovo</p>
+					<a class="add_roomprice btn">Aggiungi Nuovo</a>
 				</div>
 			</div>
 

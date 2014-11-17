@@ -496,7 +496,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 									<?php endforeach; ?>
 								</ul>
 
-								<p class="add_room"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<a class="add_room btn">Aggiungi Nuovo</a>
 
 								<hr />
 
@@ -535,7 +535,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 									<?php endwhile; ?>
 								</ul>
 
-								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<a class="add_button btn">Aggiungi Nuovo</a>
 							</fieldset>
 						</div>
 					</div>
@@ -568,7 +568,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 									<?php endwhile; ?>
 								</ul>
 
-								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<a class="add_button btn">Aggiungi Nuovo</a>
 							</fieldset>
 						</div>
 
@@ -593,7 +593,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 									<?php endwhile; ?>
 								</ul>
 
-								<p class="add_button"><img src="img/add.png" /> Aggiungi Nuovo</p>
+								<a class="add_button btn">Aggiungi Nuovo</a>
 							</fieldset>
 						</div>
 					</div>

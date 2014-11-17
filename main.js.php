@@ -48,6 +48,17 @@ $(document).ready (function () {
 
 	$('.spinner').hide ();
 
+	$('.maintable').on ('hover', 'td', function () {
+		$('.mainhead td').css ('background-color', '');
+		$('.maintable tr td:nth-child(1)').css ('background-color', '');
+
+		if ($(this).hasClass ('datecol') == false) {
+			var i = $(this).index () + 1;
+			$('.mainhead td:nth-child(' + i + ')').css ('background-color', '#555');
+			$(this).parent ().find ('td:nth-child(1)').css ('background-color', '#555');
+		}
+	});
+
 	$(".tabs .tab[id^=tab_menu]").click (function () {
 		var menu = $(this);
 		$(".tabs .tab[id^=tab_menu]").removeClass ("selected");
@@ -451,11 +462,11 @@ $(document).ready (function () {
 	$('.contacts_list li').live ('click', function () {
 		$('.contacts_list ul li.selected').removeClass ('selected');
 		$(this).addClass ('selected');
-		toks = $(this).attr ('class').split ('_');
+		var id = $(this).attr ('class').replace (/^.*contact_([0-9]*).*$/, "$1");
 		stat_s = $('.contact_editable .stats .statsstartdate').val ();
 		stat_e = $('.contact_editable .stats .statsenddate').val ();
 
-		$.getJSON ('fetch_contacts.php?action=complete&id=' + toks [1] + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
+		$.getJSON ('fetch_contacts.php?action=complete&id=' + id + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
 			fillContactForm ('contact_editable', data);
 			fillContactStats ('contact_editable', data);
 		});
@@ -593,6 +604,7 @@ $(document).ready (function () {
 		item.hide ();
 		$(this).siblings ('ul').append (item);
 		item.fadeIn (300);
+		return false;
 	});
 
 	$('.remove_button').live ('click', function () {
@@ -1111,33 +1123,6 @@ function setNav (node, alter_weeks) {
 	}
 }
 
-function setupHover () {
-	$('.maintable td').hover (function () {
-		$('.mainhead td').css ('background-color', '');
-
-		var i = $(this).index () + 1;
-		if (i < 2)
-			return;
-
-		for (a = 0; a < i; a++) {
-			c = $(this).parent ().find ('td:nth-child(' + a + ')').attr ('colspan');
-			if (typeof c != 'undefined')
-				i += parseInt (c - 1);
-		}
-
-		if (typeof $(this).attr ('colspan') != 'undefined') {
-			for (e = 0; e < parseInt ($(this).attr ('colspan')); e++)
-				$('.mainhead td:nth-child(' + (i + e) + ')').css ('background-color', '#EEEEEE');
-		}
-		else {
-			$('.mainhead td:nth-child(' + i + ')').css ('background-color', '#EEEEEE');
-		}
-
-		$(this).parent ().parent ().find ('tr td:nth-child(1)').css ('background-color', '');
-		$(this).parent ().find ('td:nth-child(1)').css ('background-color', '#EEEEEE');
-	});
-}
-
 function loadCurrentData () {
 	var data = currentData;
 	$('.allocated').remove ();
@@ -1148,8 +1133,6 @@ function loadCurrentData () {
 		row.find ('span').text (d.name);
 		row.find ('input[name=date]').val (d.date);
 	}
-
-	setupHover ();
 
 	for (var a = 0; a < data.events.length; a++) {
 		ev = data.events [a];
@@ -1253,8 +1236,7 @@ function loadCurrentPage () {
 function syncContents () {
 	having = new Array ();
 	$('.contacts_list ul li').each (function () {
-		toks = $(this).attr ('class').split ('_');
-		id = toks [1];
+		var id = $(this).attr ('class').replace (/^.*contact_([0-9]*).*$/, "$1");
 		having.push (id);
 	});
 
