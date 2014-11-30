@@ -462,14 +462,28 @@ $(document).ready (function () {
 	$('.contacts_list li').live ('click', function () {
 		$('.contacts_list ul li.selected').removeClass ('selected');
 		$(this).addClass ('selected');
-		var id = $(this).attr ('class').replace (/^.*contact_([0-9]*).*$/, "$1");
-		stat_s = $('.contact_editable .stats .statsstartdate').val ();
-		stat_e = $('.contact_editable .stats .statsenddate').val ();
 
-		$.getJSON ('fetch_contacts.php?action=complete&id=' + id + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
-			fillContactForm ('contact_editable', data);
-			fillContactStats ('contact_editable', data);
-		});
+		var id = $(this).attr ('class').replace (/^.*contact_([a-z0-9]*).*$/, "$1");
+		if (id == 'new') {
+			reset_event_contact ('contact_editable');
+		}
+		else {
+			stat_s = $('.contact_editable .stats .statsstartdate').val ();
+			stat_e = $('.contact_editable .stats .statsenddate').val ();
+
+			$.getJSON ('fetch_contacts.php?action=complete&id=' + id + '&statstart=' + stat_s + '&statend=' + stat_e, function (data) {
+				fillContactForm ('contact_editable', data);
+				fillContactStats ('contact_editable', data);
+			});
+		}
+	});
+
+	$('.contacts_list .add_contact').click (function () {
+		var list = $('.contacts_list ul');
+		$(list).find ('li').removeClass ('selected');
+		$(list).prepend ('<li class="contact_new selected">Anonimo</li>');
+		reset_event_contact ('contact_editable');
+		return false;
 	});
 
 	$(".contact_editable input[name=contactname]").live ('keyup', function (event) {
@@ -509,8 +523,10 @@ $(document).ready (function () {
 		}
 
 		$.post ('fetch_contacts.php?action=save', {contact: c}, function (data) {
-			if (data != '-1')
+			if (data != -1) {
 				$('.contact_editable input[name=contactid]').val (data);
+				$('.contacts_list ul li.contact_new').removeClass ('contact_new').addClass ('contact_' + data);
+			}
 			closeDialog ($(".configuration"));
 		});
 
@@ -922,9 +938,10 @@ function closeDialog (target) {
 }
 
 function reset_event_contact (parentclass) {
-	$('.' + parentclass + ' input[class*=remove_contact]').val ('');
+	$('.' + parentclass + ' input:not(.remove_contact)').val ('');
 	$('.' + parentclass + ' input[type=checkbox]').removeAttr ('checked');
 	$('.' + parentclass + ' input[name=contactid]').val ('new');
+	reset_contact_stats (parentclass);
 }
 
 function reset_event_edit () {
@@ -1269,9 +1286,13 @@ function fillContactForm (parentclass, data) {
 	$('.' + parentclass + ' textarea[name=contactnotes]').val (data.notes);
 }
 
-function fillContactStats (parentclass, data) {
+function reset_contact_stats (parentclass) {
 	tab = $('.' + parentclass + ' .stats .results');
-	tab.empty ();
+	tab.empty ().append ('<tr><td>Nessun evento registrato nel periodo selezionato</td></tr>');
+}
+
+function fillContactStats (parentclass, data) {
+	reset_contact_stats (parentclass);
 
 	if (data.stats.rooms.length != 0) {
 		for (var r in data.stats.rooms)
@@ -1279,9 +1300,6 @@ function fillContactStats (parentclass, data) {
 
 		tab.append ('<tr><td></td><td>Totale: ' + data.stats.topay + ' €</td></tr>');
 		tab.append ('<tr><td></td><td>Pagato: ' + data.stats.payed + ' €</td></tr>');
-	}
-	else {
-		tab.append ('<tr><td>Nessun evento registrato nel periodo selezionato</td></tr>');
 	}
 }
 

@@ -7,7 +7,6 @@
 	- esportazione widget embeddabile in configurazioni
 	- ricaricare impostazioni sale/materiali/categorie se il dialog viene chiuso senza salvare
 	- feedback attesa quando richiesta modifica evento completo (puo' richiedere del tempo per pescare tutti i dati)
-	- manca un tasto per creare un nuovo contatto fuori da un evento
 */
 
 require_once ('login.php');
@@ -168,7 +167,7 @@ list ($y, $m, $d) = explode ('-', $current_week);
 			while (date ('N', strtotime ("$y-$m-$a")) != 1)
 				$a++;
 
-			for ($week_start = $a; $week_start + 7 <= $max; $week_start += 7)
+			for ($week_start = $a; $week_start <= $max; $week_start += 7)
 				echo '<li' . ($week_start >= $d && $week_start < ($d + 7) ? ' class="active"' : '') . '><a href="#" class="<?php echo $week_start ?>">' . $week_start . '</a></li>';
 
 			?>
@@ -433,6 +432,8 @@ list ($y, $m, $d) = explode ('-', $current_week);
 							<input type="text" class="filter_ul" placeholder="Filtra per nome..." />
 
 							<hr />
+
+							<a class="add_contact btn">Aggiungi Nuovo</a>
 
 							<ul>
 								<?php
