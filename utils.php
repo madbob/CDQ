@@ -535,11 +535,12 @@ function compute_cyclic_days ($repeats) {
 	}
 
 	$check_wd = date ('N', strtotime ($start));
+	$date = $start;
 
-	if ($check_wd != $weekdays [0]['day'])
-		$date = date ('Y-m-d', strtotime ($start . ' + ' . (7 - abs ($check_wd - $weekdays [0]['day'])) . ' days'));
-	else
-		$date = $start;
+	while ($check_wd != $weekdays [0]['day']) {
+		$date = date ('Y-m-d', strtotime ($date . ' + 1 days'));
+		$check_wd = date ('N', strtotime ($date));
+	}
 
 	/*
 		Se e' stata definita una posizione nel mese (e.g.
