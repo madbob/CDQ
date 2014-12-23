@@ -911,11 +911,7 @@ function oldEventDays () {
 }
 
 function showDialog (target) {
-	if (target.outerHeight () > ($(window).height ()))
-		target.css ("top", "10px");
-	else
-		target.css ("top", (($(window).height () - target.outerHeight()) / 2) + $(window).scrollTop () + "px");
-
+	target.css ("top", "10px");
 	target.css ("left", (($(window).width () - target.outerWidth()) / 2) + $(window).scrollLeft () + "px");
 
 	var overlay = $("<div id='modal-overlay'></div>");

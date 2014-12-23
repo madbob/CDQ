@@ -527,6 +527,9 @@ list ($y, $m, $d) = explode ('-', $current_week);
 
 								?>
 
+								<legend>Materiali</legend>
+								<br />
+
 								<ul class="materials_names">
 									<?php while ($r = $result->fetch_array ()): ?>
 									<li class="ec_<?php echo $r ['id'] ?>">
